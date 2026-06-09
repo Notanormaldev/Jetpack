@@ -7,7 +7,9 @@ function App() {
 
   const {handlegetme}=useauth()
   useEffect(()=>{
-    handlegetme()
+    handlegetme().catch((err) => {
+      console.log("No active user session detected (clean boot).")
+    })
   },[])
 
   return (
