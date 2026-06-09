@@ -1,486 +1,295 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:wght@100..900&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
-
-/* BRAND AUTH — LUXURY ATELIER SYSTEM MATCHING THEME */
+/* Auth.css — iPhone-style Glassmorphism Auth System */
 
 :root {
-  --dash-bg: #050505;
-  --dash-bg-gradient: none;
-  --dash-text: #E8E8E8;
+  --ios-bg: #09090E;
+  --ios-text: #FFFFFF;
+  --ios-text-secondary: rgba(255, 255, 255, 0.6);
+  --ios-glass: rgba(20, 20, 30, 0.45);
+  --ios-glass-border: rgba(255, 255, 255, 0.08);
+  --ios-primary: #0A84FF;
+  --ios-primary-hover: #359aff;
+  --input-bg: rgba(255, 255, 255, 0.04);
+  --input-border: rgba(255, 255, 255, 0.1);
+  --input-focus-border: rgba(10, 132, 255, 0.5);
   --dash-title: #FFFFFF;
-  --dash-subtitle: #666666;
-  --dash-card-bg: rgba(10, 10, 10, 0.4);
-  --dash-card-border: rgba(255, 255, 255, 0.05);
-  
-  --dash-btn-bg: #FFFFFF;
-  --dash-btn-text: #000000;
-  --dash-btn-border: #FFFFFF;
-  --dash-btn-hover-bg: transparent;
-  --dash-btn-hover-text: #FFFFFF;
-
-  --input-bg: rgba(255, 255, 255, 0.01);
-  --input-text: #FFFFFF;
-  --input-placeholder: #555555;
-  --input-border: rgba(255, 255, 255, 0.08);
-
-  --cursor-dot: #FFFFFF;
-  --cursor-ring: rgba(255, 255, 255, 0.2);
-  --editorial-quote: #E8E8E8;
+  --dash-subtitle: rgba(255, 255, 255, 0.6);
 }
 
-[data-theme='light'] {
-  --dash-bg: #FAFAFA;
-  --dash-bg-gradient: none;
-  --dash-text: #222222;
-  --dash-title: #111111;
-  --dash-subtitle: #666666;
-  --dash-card-bg: #FFFFFF;
-  --dash-card-border: #E5E5E5;
-  
-  --dash-btn-bg: #111111;
-  --dash-btn-text: #FFFFFF;
-  --dash-btn-border: #111111;
-  --dash-btn-hover-bg: transparent;
-  --dash-btn-hover-text: #111111;
-
-  --input-bg: #FFFFFF;
-  --input-text: #111111;
-  --input-placeholder: #A0A0A0;
-  --input-border: #D1D1D1;
-
-  --cursor-dot: #111111;
-  --cursor-ring: rgba(0, 0, 0, 0.2);
-  --editorial-quote: #111111;
-}
-
-/* Base Body Settings */
+/* Base Body Styles */
 .genz-auth-body {
-  background-color: var(--dash-bg);
-  color: var(--dash-text);
-  font-family: 'Inter', sans-serif;
-  transition: background-color 0.4s ease, color 0.4s ease;
-}
-
-/* Typography styles */
-.font-logo {
-  font-family: 'Cormorant Garamond', serif;
-}
-
-.font-heading {
-  font-family: 'Space Grotesk', sans-serif;
-  font-weight: 300;
-  letter-spacing: -0.5px;
-  text-transform: uppercase;
-}
-
-.font-mono {
-  font-family: 'JetBrains Mono', monospace;
-}
-
-.font-body {
-  font-family: 'Inter', sans-serif;
-}
-
-/* Technical Split Background Layout */
-.genz-grid-bg {
-  background-color: var(--dash-bg);
+  background-color: var(--ios-bg);
+  color: var(--ios-text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   width: 100vw;
   min-height: 100vh;
   display: flex;
-  flex-row: row;
+  align-items: center;
+  justify-content: center;
   position: relative;
   overflow: hidden;
   box-sizing: border-box;
+  padding: 24px;
 }
 
-/* Left Fashion Editorial Column (50%) */
-.editorial-column {
-  width: 50%;
-  height: 100vh;
-  position: relative;
-  overflow: hidden;
-  box-sizing: border-box;
-}
-
-.editorial-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.editorial-overlay {
+/* ════════ BACKGROUND GLOW EFFECTS ════════ */
+.auth-bg-circle {
   position: absolute;
-  inset: 0;
+  border-radius: 50%;
+  filter: blur(85px);
+  opacity: 0.35;
+  z-index: 1;
   pointer-events: none;
+  animation: floatCircle 12s infinite alternate ease-in-out;
 }
 
-[data-theme='light'] .editorial-overlay {
-  background: rgba(250, 250, 250, 0.15);
+.auth-bg-circle.bg-purple {
+  width: 450px;
+  height: 450px;
+  background: radial-gradient(circle, #7000FF 0%, rgba(112,0,255,0) 70%);
+  top: -10%;
+  left: 5%;
 }
 
-[data-theme='dark'] .editorial-overlay {
-  background: rgba(5, 5, 5, 0.25);
+.auth-bg-circle.bg-cyan {
+  width: 480px;
+  height: 480px;
+  background: radial-gradient(circle, #00F0FF 0%, rgba(0,240,255,0) 70%);
+  bottom: -5%;
+  right: 5%;
+  animation-delay: -4s;
 }
 
-.editorial-text-wrap {
-  position: absolute;
-  left: 48px;
-  bottom: 48px;
-  right: 48px;
+.auth-bg-circle.bg-pink {
+  width: 350px;
+  height: 350px;
+  background: radial-gradient(circle, #FF007A 0%, rgba(255,0,122,0) 70%);
+  top: 35%;
+  right: 25%;
+  animation-delay: -8s;
+}
+
+@keyframes floatCircle {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(30px, -30px) scale(1.08); }
+}
+
+/* ════════ AUTH CARD ════════ */
+.genz-auth-card-wrapper {
+  width: 100%;
+  max-width: 480px;
   z-index: 10;
-  text-align: left;
-  user-select: none;
+  animation: cardEntrance 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-.auth-editorial-quote {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 32px;
-  font-style: italic;
-  font-weight: 300;
-  color: var(--editorial-quote);
-  line-height: 1.4;
-  letter-spacing: 0.5px;
-  max-w: 480px;
-}
-
-.auth-editorial-line {
-  height: 1px;
-  width: 60px;
-  background-color: var(--editorial-quote);
-  opacity: 0.3;
-  margin: 20px 0 12px 0;
-}
-
-.auth-editorial-sub {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--dash-subtitle);
-}
-
-/* Right Form Column (50%) */
-.form-column {
-  width: 50%;
-  height: 100vh;
-  background-color: var(--dash-bg);
-  background-image: var(--dash-bg-gradient);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 32px 48px;
-  overflow-y: auto;
-  box-sizing: border-box;
-}
-
-@media (max-width: 768px) {
-  .editorial-column {
-    display: none !important;
-  }
-  .form-column {
-    width: 100% !important;
-    padding: 40px 24px !important;
-  }
+@keyframes cardEntrance {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .genz-auth-card {
-  background-color: transparent;
-  border: none;
-  width: 100%;
-  max-width: 540px;
-  margin: 3vh auto auto !important;
-  padding: 24px 40px;
+  background: var(--ios-glass);
+  backdrop-filter: blur(25px) saturate(190%);
+  -webkit-backdrop-filter: blur(25px) saturate(190%);
+  border: 1px solid var(--ios-glass-border);
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), 
+              inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
   box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
 }
 
-.auth-logo-container {
-  margin-top: 0px !important;
-  margin-bottom: 24px !important;
-}
-
-.logo-scale-wrapper {
-  transform: scale(1.35) !important;
-  transform-origin: left !important;
-  display: inline-block !important;
-}
-
-.genz-auth-card form {
-  margin-top: 24px !important;
-}
-
-.genz-auth-card:hover {
-  /* No hover effect for minimalist card */
-}
-
-/* Brand header */
-.auth-logo-wrap {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 32px;
-}
-
-.auth-technical-divider {
-  width: 100%;
-  height: 0.5px;
-  background-color: var(--dash-card-border);
-  margin: 16px 0;
-  position: relative;
-  transition: background-color 0.4s ease;
-}
-
-.auth-technical-divider::after {
-  content: 'ATELIER';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: var(--dash-bg);
-  padding: 0 8px;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 8px;
-  font-weight: 500;
-  color: var(--dash-subtitle);
-  letter-spacing: 2px;
-}
-
-/* Form Input Wrapper and Inputs */
+/* ════════ INPUT FIELDS ════════ */
 .auth-input-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  margin-bottom: 16px;
+  gap: 8px;
+  margin-bottom: 20px;
   position: relative;
   width: 100%;
-  text-align: left;
 }
 
-.auth-label {
-  display: none; /* Hide labels for minimalist look */
+.auth-input-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ios-text-secondary);
+  padding-left: 4px;
 }
 
 .auth-input {
   width: 100%;
   height: 48px;
-  background-color: transparent;
-  border: none;
-  border-bottom: 1px solid var(--input-border);
-  border-radius: 0;
-  padding: 12px 0px;
-  font-family: 'Inter', sans-serif;
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 12px;
+  padding: 12px 16px;
   font-size: 14px;
-  color: var(--input-text);
+  color: var(--ios-text);
   outline: none;
   box-sizing: border-box;
-  transition: border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .auth-input:focus {
-  border-bottom-color: var(--dash-title);
+  background-color: rgba(255, 255, 255, 0.06);
+  border-color: var(--ios-primary);
+  box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.15);
 }
 
 .auth-input::placeholder {
-  color: var(--input-placeholder);
+  color: rgba(255, 255, 255, 0.3);
 }
 
-/* Luxury Atelier CTA Button */
-.cta-button {
-  width: 100%;
-  height: 52px;
-  background-color: var(--dash-btn-bg);
-  border: 1px solid var(--dash-btn-border);
-  color: var(--dash-btn-text);
-  border-radius: 50px;
-  font-family: 'Inter', sans-serif;
-  font-size: 14px;
-  font-weight: 500;
+/* Show/Hide password toggle */
+.pwd-toggle-btn {
+  position: absolute;
+  right: 16px;
+  top: 38px;
+  background: none;
+  border: none;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ios-primary);
   cursor: pointer;
   outline: none;
+  letter-spacing: 0.5px;
+}
+
+.pwd-toggle-btn:hover {
+  color: var(--ios-primary-hover);
+}
+
+/* ════════ BUTTONS ════════ */
+.cta-button {
+  width: 100%;
+  height: 48px;
+  background-color: var(--ios-primary);
+  border: none;
+  color: #FFFFFF;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.4s ease;
-  margin-top: 16px;
-}
-
-.cta-button:hover:not(:disabled) {
-  opacity: 0.9;
-}
-
-.cta-button:active:not(:disabled) {
-  transform: scale(0.98);
-}
-
-.cta-button:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-/* Google Sign-in Custom Dashboard-Match Button */
-.google-signin-container {
-  width: 100%;
+  transition: all 0.3s ease;
   margin-top: 10px;
 }
 
-.google-button-custom {
-  width: 100%;
-  height: 52px;
-  background-color: transparent;
-  border: 1px solid var(--input-border);
-  border-radius: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  font-family: 'Inter', sans-serif;
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--dash-title);
-  cursor: pointer;
-  outline: none;
-  transition: all 0.3s ease;
+.cta-button:hover:not(:disabled) {
+  background-color: var(--ios-primary-hover);
+  transform: translateY(-1px);
 }
 
-.google-button-custom:hover:not(:disabled) {
-  border-color: var(--dash-title);
-  background-color: rgba(0,0,0,0.02);
+.cta-button:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
 }
 
-.google-button-custom:active:not(:disabled) {
-  transform: scale(0.98);
-}
-
-.google-button-custom:disabled {
-  opacity: 0.4;
+.cta-button:disabled {
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
-/* Divs & Dividers */
+/* ════════ SOCIAL DIVIDER ════════ */
 .social-divider {
-  width: 100%;
   display: flex;
   align-items: center;
   gap: 12px;
-  margin: 16px 0 12px 0; /* More margin */
+  margin: 24px 0 16px 0;
 }
 
 .social-divider-line {
   flex: 1;
-  height: 0.5px;
-  background-color: var(--dash-card-border);
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.08);
 }
 
 .social-divider-text {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 10px;
-  font-weight: 400;
-  letter-spacing: 1px;
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.4);
   text-transform: uppercase;
-  color: var(--dash-subtitle);
-  white-space: nowrap;
+  letter-spacing: 1px;
 }
 
-/* Custom Cursors */
-.custom-cursor-dot {
-  width: 6px;
-  height: 6px;
-  background-color: var(--cursor-dot);
-  border-radius: 50%;
-  position: fixed;
-  pointer-events: none;
-  z-index: 9999;
-  transform: translate(-50%, -50%);
-  mix-blend-mode: difference;
+/* ════════ GOOGLE BUTTON ════════ */
+.google-signin-container {
+  width: 100%;
 }
 
-.custom-cursor-ring {
-  width: 30px;
-  height: 30px;
-  border: 1px solid var(--cursor-ring);
-  border-radius: 50%;
-  position: fixed;
-  pointer-events: none;
-  z-index: 9998;
-  transform: translate(-50%, -50%);
-  transition: width 0.3s ease, height 0.3s ease, border-color 0.3s ease;
-}
-
-.custom-cursor-ring.hovered {
-  width: 50px;
-  height: 50px;
-  border-color: var(--dash-title);
-  background-color: rgba(128, 128, 128, 0.05);
-}
-
-@media (hover: none) and (pointer: coarse) {
-  .custom-cursor-dot,
-  .custom-cursor-ring {
-    display: none;
-  }
-}
-
-/* Floating Theme Toggle (Match Dashboard) */
-.theme-toggle-floating {
-  position: absolute;
-  top: 24px;
-  right: 24px;
-  z-index: 100;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background-color: var(--dash-card-bg);
-  border: 1px solid var(--dash-card-border);
-  color: var(--dash-title);
+.google-button-custom {
+  width: 100%;
+  height: 48px;
+  background-color: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--input-border);
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ios-text);
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.3s ease;
 }
 
-.theme-toggle-floating:hover {
-  transform: scale(1.06);
-  border-color: var(--dash-title);
+.google-button-custom:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
-.theme-toggle-floating:active {
-  transform: scale(0.96);
+/* ════════ FOOTER LINKS ════════ */
+.auth-text-muted {
+  font-size: 13px;
+  color: var(--ios-text-secondary);
 }
 
-/* OTP Elements */
+.auth-link {
+  color: var(--ios-primary);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.auth-link:hover {
+  text-decoration: underline;
+}
+
+.auth-legal-text {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 16px;
+}
+
+/* ════════ OTP STYLING ════════ */
 .otp-input {
-  font-family: 'Space Grotesk', sans-serif !important;
   letter-spacing: 8px;
   font-size: 20px !important;
-  font-weight: 500;
+  font-weight: 600;
   text-align: center;
 }
 
 .resend-otp-button {
   width: 100%;
-  height: 44px;
-  background-color: transparent;
-  border: 0.5px dashed var(--dash-card-border);
-  color: var(--dash-text);
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
+  height: 40px;
+  background: none;
+  border: 1px dashed rgba(255, 255, 255, 0.15);
+  color: var(--ios-text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 12px;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   transition: all 0.3s ease;
 }
 
 .resend-otp-button:hover:not(:disabled) {
-  border-color: var(--dash-title);
-  background-color: var(--dash-card-border);
+  border-color: var(--ios-primary);
+  color: var(--ios-text);
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .resend-otp-button:disabled {
@@ -488,75 +297,38 @@
   cursor: not-allowed;
 }
 
-/* Modals - Glassmorphic */
+/* ════════ FORGOT PWD BUTTON ════════ */
+.forgot-pwd-wrap {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -8px;
+  margin-bottom: 16px;
+}
+
+.forgot-pwd-btn {
+  background: none;
+  border: none;
+  font-size: 12px;
+  color: var(--ios-primary);
+  cursor: pointer;
+  text-decoration: none;
+  padding: 0;
+}
+
+.forgot-pwd-btn:hover {
+  text-decoration: underline;
+}
+
+/* ════════ MODALS ════════ */
 .fixed.inset-0 {
-  background-color: rgba(5, 5, 5, 0.6);
-  backdrop-filter: blur(8px);
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .fixed.inset-0 > div {
-  background-color: var(--dash-card-bg) !important;
-  backdrop-filter: blur(15px);
-  border: 0.5px solid var(--dash-card-border) !important;
-  border-radius: 2px !important;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.15) !important;
-}
-
-/* Text Headers */
-.auth-heading {
-  color: var(--dash-title);
-  font-family: 'Space Grotesk', sans-serif;
-  font-weight: 300;
-  font-size: 26px;
-  letter-spacing: -0.5px;
-  line-height: 1.2;
-  text-align: left;
-}
-
-.auth-text-muted {
-  color: var(--dash-subtitle);
-  font-family: 'DM Sans', sans-serif;
-  font-size: 12px;
-}
-
-.auth-link {
-  color: var(--dash-title);
-  font-family: 'Space Grotesk', sans-serif;
-  font-weight: 500;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-.auth-link:hover {
-  opacity: 0.8;
-}
-
-.auth-legal-text {
-  color: var(--dash-subtitle);
-  font-family: 'DM Sans', sans-serif;
-  font-size: 9px;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  margin-top: 12px;
-}
-
-/* Hide scrollbar but keep scroll functionality */
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-/* Editorial Corner Text Theme Responsive Colors */
-.editorial-corner-text {
-  color: #FFFFFF !important;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
-  transition: color 0.4s ease;
-}
-
-[data-theme='light'] .editorial-corner-text {
-  color: #111111 !important;
-  text-shadow: none;
+  background-color: rgba(20, 20, 25, 0.9) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.5) !important;
 }
