@@ -1,5 +1,13 @@
 /* Auth.css — Minimalist Light Theme Auth System */
 
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
 :root {
   --ios-bg: #FAFAFA;
   --ios-text: #0F172A;
@@ -23,15 +31,15 @@
     radial-gradient(circle at 0% 100%, rgba(112, 0, 255, 0.02) 0%, transparent 40%);
   color: var(--ios-text);
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
-  overflow: hidden;
+  overflow-y: auto;
   box-sizing: border-box;
-  padding: 16px;
+  padding: 32px 16px;
 }
 
 /* Hide background circles to ensure minimalism */
