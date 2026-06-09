@@ -38,8 +38,13 @@ html, body, #root {
   justify-content: center;
   position: relative;
   overflow-y: auto;
+  scrollbar-width: none; /* Hide scrollbar for Firefox */
   box-sizing: border-box;
   padding: 32px 16px;
+}
+
+.genz-auth-body::-webkit-scrollbar {
+  display: none; /* Hide scrollbar for Chrome/Safari */
 }
 
 /* Hide background circles to ensure minimalism */
