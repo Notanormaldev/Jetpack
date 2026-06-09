@@ -6,11 +6,6 @@ import cors from 'cors'
 import passport from 'passport'
 import {Strategy as GoogleStrategy} from 'passport-google-oauth20'
 import config from './config/config.js'
-import productroute from './Routes/product.route.js'
-import cartroute from './Routes/cart.route.js'
-import airoute from './Routes/ai.route.js'
-import wishlistroute from './Routes/wishlist.route.js'
-import orderRoute from './Routes/order.route.js'
 
 const app=express()
 app.use(express.json())
@@ -40,9 +35,4 @@ passport.use(new GoogleStrategy({
 
 
 app.use('/api/auth',authrouter)
-app.use('/api/product',productroute)
-app.use('/api/cart',cartroute)
-app.use('/api/ai',airoute)
-app.use('/api/wishlist',wishlistroute)
-app.use('/api/order',orderRoute)
 export default app
