@@ -3,7 +3,7 @@ import React from 'react'
 function Logo({ size = 28, showText = true }) {
   return (
     <div className="flex items-center gap-2.5 select-none logo-container">
-      {/* Sleek iPhone-style Jetpack SVG Logo */}
+      {/* Sleek Minimalist Jetpack SVG Logo */}
       <svg
         width={size}
         height={size}
@@ -13,53 +13,38 @@ function Logo({ size = 28, showText = true }) {
         className="logo-icon-svg"
       >
         <defs>
-          {/* Cyber-Cyan/Violet Gradient for Jetpack Boosters */}
-          <linearGradient id="jetpack-glow" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#00F0FF" />
-            <stop offset="50%" stopColor="#7000FF" />
-            <stop offset="100%" stopColor="#FF007A" />
+          <linearGradient id="jet-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#0071E3" />
+            <stop offset="100%" stopColor="#7000FF" />
           </linearGradient>
-          {/* Sleek Glass White Gradient */}
-          <linearGradient id="glass-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="rgba(255, 255, 255, 0.9)" />
-            <stop offset="100%" stopColor="rgba(255, 255, 255, 0.4)" />
-          </linearGradient>
-          {/* Dark theme shadow */}
-          <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="8" result="blur" />
-            <feComposite in="SourceGraphic" in2="blur" operator="over" />
-          </filter>
         </defs>
-
-        {/* Back Flame Glow */}
-        <path
-          d="M35 72 L31 88 L38 80 Z"
-          fill="url(#jetpack-glow)"
-          opacity="0.95"
-        />
-        <path
-          d="M65 72 L69 88 L62 80 Z"
-          fill="url(#jetpack-glow)"
-          opacity="0.95"
-        />
-
-        {/* Jetpack Outer Thruster Bodies (L & R) */}
-        <rect x="25" y="28" width="16" height="42" rx="8" fill="url(#glass-grad)" stroke="rgba(255, 255, 255, 0.35)" strokeWidth="1.5" />
-        <rect x="59" y="28" width="16" height="42" rx="8" fill="url(#glass-grad)" stroke="rgba(255, 255, 255, 0.35)" strokeWidth="1.5" />
-
-        {/* Jetpack Center Body Harness */}
-        <rect x="39" y="23" width="22" height="37" rx="5" fill="rgba(255, 255, 255, 0.15)" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="1.2" />
-
-        {/* Connecting Tubes */}
-        <path d="M41 41 H59" stroke="rgba(255, 255, 255, 0.5)" strokeWidth="2" />
-
-        {/* Core Power Node */}
-        <circle cx="50" cy="41" r="5" fill="#00F0FF" filter="url(#glow)" />
+        
+        {/* Left Jet Wing (Gradient Ribbon) */}
+        <path d="M24 72 L48 20 L58 45 L34 80 Z" fill="url(#jet-grad)" />
+        
+        {/* Right Jet Wing (Slate Ribbon) */}
+        <path d="M76 72 L52 20 L42 45 L66 80 Z" fill="#0F172A" />
+        
+        {/* Floating Center Core Node */}
+        <circle cx="50" cy="40" r="6.5" fill="#FFFFFF" stroke="#0F172A" strokeWidth="4.5" />
+        <circle cx="50" cy="40" r="2.5" fill="#0071E3" />
+        
+        {/* Clean Flame Boost Paths */}
+        <path d="M30 84 L30 92" stroke="#0071E3" strokeWidth="4.5" strokeLinecap="round" />
+        <path d="M70 84 L70 92" stroke="#0071E3" strokeWidth="4.5" strokeLinecap="round" />
       </svg>
 
       {showText && (
-        <span className="logo-text font-bold tracking-[1.5px]" style={{ fontSize: '18px', textTransform: 'lowercase', fontFamily: "'Space Grotesk', sans-serif" }}>
-          jetpack<span style={{ color: '#00F0FF' }}>.</span>
+        <span className="logo-text font-bold tracking-[1.5px]" style={{ 
+          fontSize: '19px', 
+          textTransform: 'lowercase', 
+          fontFamily: "'Space Grotesk', sans-serif",
+          background: 'linear-gradient(to right, #0F172A 72%, #0071E3 100%)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          display: 'inline-block'
+        }}>
+          jetpack<span style={{ color: '#0071E3', WebkitTextFillColor: '#0071E3' }}>.</span>
         </span>
       )}
     </div>
