@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux"
-import { getme, login, register, verifyOtp, becomeSellerApi, becomeDeliveryApi, updateSettingsApi, forgotPasswordApi, resetPasswordApi, logoutApi } from "../services/auth.api"
+import { getme, login, register, verifyOtp, becomeSellerApi, becomeDeliveryApi, updateSettingsApi, forgotPasswordApi, resetPasswordApi, logoutApi, deleteAccountApi } from "../services/auth.api"
 import { seterror, setloading, setuser } from "../auth.slice"
 
 export const useauth = () => {
@@ -188,6 +188,22 @@ export const useauth = () => {
       }
     }
 
+    async function handledeleteaccount() {
+      dispatch(setloading(true))
+      dispatch(seterror(null))
+      try {
+        await deleteAccountApi()
+        dispatch(setuser(null))
+        dispatch(setloading(false))
+        return { success: true }
+      } catch (err) {
+        console.log("Delete account error:", err)
+        dispatch(seterror(err))
+        dispatch(setloading(false))
+        throw err
+      }
+    }
+
     return {
         user,
         loading,
@@ -202,7 +218,8 @@ export const useauth = () => {
         handleupdatesettings,
         handleforgotpassword,
         handleresetpassword,
-        handlelogout
+        handlelogout,
+        handledeleteaccount
     }
 }
 

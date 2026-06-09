@@ -98,5 +98,14 @@ export async function updateSettingsApi(settings){
      }
 }
 
+export async function deleteAccountApi(){
+     try {
+        const res=await authapi.delete('/delete-account')
+        return res.data
+     } catch (error) {
+        throw error.response?.data || { msg: "Failed to delete account" }
+     }
+}
+
 
 
