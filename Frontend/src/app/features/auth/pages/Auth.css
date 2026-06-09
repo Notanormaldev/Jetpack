@@ -1,25 +1,25 @@
-/* Auth.css — iPhone-style Glassmorphism Auth System */
+/* Auth.css — iPhone-style White Glassmorphism Auth System */
 
 :root {
-  --ios-bg: #09090E;
-  --ios-text: #FFFFFF;
-  --ios-text-secondary: rgba(255, 255, 255, 0.6);
-  --ios-glass: rgba(20, 20, 30, 0.45);
-  --ios-glass-border: rgba(255, 255, 255, 0.08);
-  --ios-primary: #0A84FF;
-  --ios-primary-hover: #359aff;
-  --input-bg: rgba(255, 255, 255, 0.04);
-  --input-border: rgba(255, 255, 255, 0.1);
-  --input-focus-border: rgba(10, 132, 255, 0.5);
-  --dash-title: #FFFFFF;
-  --dash-subtitle: rgba(255, 255, 255, 0.6);
+  --ios-bg: #F5F5F7;
+  --ios-text: #1D1D1F;
+  --ios-text-secondary: #86868B;
+  --ios-glass: rgba(255, 255, 255, 0.55);
+  --ios-glass-border: rgba(0, 0, 0, 0.06);
+  --ios-primary: #0071E3; /* iOS Apple Blue */
+  --ios-primary-hover: #1D80E9;
+  --input-bg: rgba(255, 255, 255, 0.8);
+  --input-border: rgba(0, 0, 0, 0.08);
+  --input-focus-border: rgba(0, 113, 227, 0.4);
+  --dash-title: #1D1D1F;
+  --dash-subtitle: #86868B;
 }
 
 /* Base Body Styles */
 .genz-auth-body {
   background-color: var(--ios-bg);
   color: var(--ios-text);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
   width: 100vw;
   min-height: 100vh;
   display: flex;
@@ -31,46 +31,46 @@
   padding: 24px;
 }
 
-/* ════════ BACKGROUND GLOW EFFECTS ════════ */
+/* ════════ BACKGROUND GLOW EFFECTS (Soft Pastel Gradients) ════════ */
 .auth-bg-circle {
   position: absolute;
   border-radius: 50%;
-  filter: blur(85px);
-  opacity: 0.35;
+  filter: blur(90px);
+  opacity: 0.65;
   z-index: 1;
   pointer-events: none;
-  animation: floatCircle 12s infinite alternate ease-in-out;
+  animation: floatCircle 15s infinite alternate ease-in-out;
 }
 
 .auth-bg-circle.bg-purple {
-  width: 450px;
-  height: 450px;
-  background: radial-gradient(circle, #7000FF 0%, rgba(112,0,255,0) 70%);
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, #E5DBFF 0%, rgba(229,219,255,0) 70%);
   top: -10%;
   left: 5%;
 }
 
 .auth-bg-circle.bg-cyan {
-  width: 480px;
-  height: 480px;
-  background: radial-gradient(circle, #00F0FF 0%, rgba(0,240,255,0) 70%);
+  width: 550px;
+  height: 550px;
+  background: radial-gradient(circle, #D2F5FF 0%, rgba(210,245,255,0) 70%);
   bottom: -5%;
   right: 5%;
-  animation-delay: -4s;
+  animation-delay: -5s;
 }
 
 .auth-bg-circle.bg-pink {
-  width: 350px;
-  height: 350px;
-  background: radial-gradient(circle, #FF007A 0%, rgba(255,0,122,0) 70%);
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, #FFE5EE 0%, rgba(255,229,238,0) 70%);
   top: 35%;
   right: 25%;
-  animation-delay: -8s;
+  animation-delay: -10s;
 }
 
 @keyframes floatCircle {
   0% { transform: translate(0, 0) scale(1); }
-  100% { transform: translate(30px, -30px) scale(1.08); }
+  100% { transform: translate(40px, -40px) scale(1.06); }
 }
 
 /* ════════ AUTH CARD ════════ */
@@ -88,13 +88,13 @@
 
 .genz-auth-card {
   background: var(--ios-glass);
-  backdrop-filter: blur(25px) saturate(190%);
-  -webkit-backdrop-filter: blur(25px) saturate(190%);
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
   border: 1px solid var(--ios-glass-border);
-  border-radius: 24px;
+  border-radius: 28px;
   padding: 40px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), 
-              inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.04), 
+              inset 0 1px 0 rgba(255, 255, 255, 0.7);
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -108,6 +108,7 @@
   margin-bottom: 20px;
   position: relative;
   width: 100%;
+  text-align: left;
 }
 
 .auth-input-label {
@@ -132,13 +133,13 @@
 }
 
 .auth-input:focus {
-  background-color: rgba(255, 255, 255, 0.06);
+  background-color: #FFFFFF;
   border-color: var(--ios-primary);
-  box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.15);
+  box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.15);
 }
 
 .auth-input::placeholder {
-  color: rgba(255, 255, 255, 0.3);
+  color: rgba(0, 0, 0, 0.25);
 }
 
 /* Show/Hide password toggle */
@@ -176,11 +177,13 @@
   justify-content: center;
   transition: all 0.3s ease;
   margin-top: 10px;
+  box-shadow: 0 4px 12px rgba(0, 113, 227, 0.15);
 }
 
 .cta-button:hover:not(:disabled) {
   background-color: var(--ios-primary-hover);
   transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 113, 227, 0.25);
 }
 
 .cta-button:active:not(:disabled) {
@@ -190,6 +193,7 @@
 .cta-button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  box-shadow: none;
 }
 
 /* ════════ SOCIAL DIVIDER ════════ */
@@ -203,13 +207,13 @@
 .social-divider-line {
   flex: 1;
   height: 1px;
-  background-color: rgba(255, 255, 255, 0.08);
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
 .social-divider-text {
   font-size: 11px;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(0, 0, 0, 0.35);
   text-transform: uppercase;
   letter-spacing: 1px;
 }
@@ -222,7 +226,7 @@
 .google-button-custom {
   width: 100%;
   height: 48px;
-  background-color: rgba(255, 255, 255, 0.04);
+  background-color: rgba(255, 255, 255, 0.7);
   border: 1px solid var(--input-border);
   border-radius: 12px;
   display: flex;
@@ -237,8 +241,9 @@
 }
 
 .google-button-custom:hover {
-  background-color: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.2);
+  background-color: #FFFFFF;
+  border-color: rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
 }
 
 /* ════════ FOOTER LINKS ════════ */
@@ -259,7 +264,7 @@
 
 .auth-legal-text {
   font-size: 10px;
-  color: rgba(255, 255, 255, 0.3);
+  color: rgba(0, 0, 0, 0.25);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-top: 16px;
@@ -277,7 +282,7 @@
   width: 100%;
   height: 40px;
   background: none;
-  border: 1px dashed rgba(255, 255, 255, 0.15);
+  border: 1px dashed rgba(0, 0, 0, 0.12);
   color: var(--ios-text-secondary);
   font-size: 12px;
   font-weight: 600;
@@ -288,8 +293,8 @@
 
 .resend-otp-button:hover:not(:disabled) {
   border-color: var(--ios-primary);
-  color: var(--ios-text);
-  background: rgba(255, 255, 255, 0.02);
+  color: var(--ios-primary);
+  background: rgba(0, 113, 227, 0.03);
 }
 
 .resend-otp-button:disabled {
@@ -321,14 +326,31 @@
 
 /* ════════ MODALS ════════ */
 .fixed.inset-0 {
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
 
 .fixed.inset-0 > div {
-  background-color: rgba(20, 20, 25, 0.9) !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  background-color: rgba(255, 255, 255, 0.85) !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
   border-radius: 20px !important;
-  box-shadow: 0 24px 60px rgba(0,0,0,0.5) !important;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.1) !important;
+}
+.fixed.inset-0 h2 {
+  color: #1D1D1F !important;
+}
+.fixed.inset-0 label {
+  color: #86868B !important;
+}
+.fixed.inset-0 input {
+  color: #1D1D1F !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  background-color: rgba(255, 255, 255, 0.9) !important;
+}
+.fixed.inset-0 input:focus {
+  border-color: var(--ios-primary) !important;
+}
+.fixed.inset-0 button.cta-button {
+  color: #FFFFFF !important;
 }
