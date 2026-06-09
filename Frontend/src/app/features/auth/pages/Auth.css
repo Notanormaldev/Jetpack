@@ -31,16 +31,20 @@ html, body, #root {
     radial-gradient(circle at 0% 100%, rgba(112, 0, 255, 0.02) 0%, transparent 40%);
   color: var(--ios-text);
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  width: 100%;
-  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
   overflow-y: auto;
+  overflow-x: hidden;
   scrollbar-width: none; /* Hide scrollbar for Firefox */
   box-sizing: border-box;
   padding: 32px 16px;
+  z-index: 9999;
 }
 
 .genz-auth-body::-webkit-scrollbar {
