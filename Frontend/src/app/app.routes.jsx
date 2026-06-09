@@ -12,11 +12,16 @@ import Cart from './features/cart/pages/Cart'
 import Wishlist from './features/wishlist/pages/Wishlist'
 import OrderSuccess from './features/cart/pages/OrderSuccess'
 import DeliveryDashboard from './features/products/pages/DeliveryDashboard'
+import JetpackPanel from './features/auth/pages/JetpackPanel'
 
 
 export  const router = createBrowserRouter([
      {
         path:'/',
+        element:<Protected><JetpackPanel/></Protected>
+     },
+     {
+        path:'/shop',
         element:<Home/>
      },
      {
