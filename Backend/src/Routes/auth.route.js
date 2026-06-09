@@ -17,6 +17,7 @@ authrouter.put('/update-settings', authtokenmiddleware, authController.updateSet
 authrouter.post('/forgot-password', authController.forgotPassword)
 authrouter.post('/reset-password', authController.resetPassword)
 authrouter.post('/logout', authController.logout)
+authrouter.delete('/delete-account', authtokenmiddleware, authController.deleteaccount)
 
 
 authrouter.get('/google',

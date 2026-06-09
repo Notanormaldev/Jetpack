@@ -228,8 +228,8 @@ async function logout(req,res){
 }
 async function deleteaccount(req,res){
     const id = req.user.id
+    const token = req.cookies.token;
 
-     
     const finduser = await usermodel.findById(id)
 
     if(!finduser){
@@ -239,7 +239,17 @@ async function deleteaccount(req,res){
     }
     
     await usermodel.findByIdAndDelete(id)
-    res.clearCookie('token')
+    
+    if (token) {
+        await redis.set(token, Date.now().toString(), 'EX', 3600 * 24 * 7) // 7 days matching cookie expiration
+    }
+    
+    res.clearCookie('token', {
+        httpOnly: true,
+        secure: true,        
+        sameSite: 'none',    
+        path: '/'            
+    });
 
     return res.status(200).json({
         msg:"user deleted sucessfully"

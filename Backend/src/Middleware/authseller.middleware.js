@@ -2,6 +2,7 @@
 import jwt from 'jsonwebtoken'
 import config from '../config/config.js';
 import usermodel from '../models/user.model.js';
+import redis from '../config/cache.js';
 
 export async function authsellermiddleware(req,res,next){
     const token = req.cookies.token
@@ -13,6 +14,14 @@ export async function authsellermiddleware(req,res,next){
     }
     
     try {
+        const isBlacklisted = await redis.get(token)
+        if (isBlacklisted) {
+            return res.status(401).json({
+                success: false,
+                msg: "Invalid session (logged out)"
+            })
+        }
+
         const decoded=jwt.verify(token,config.JWT)
         
         // Fetch up-to-date user from database to check actual role
