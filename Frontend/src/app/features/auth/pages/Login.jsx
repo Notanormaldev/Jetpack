@@ -126,11 +126,6 @@ function Login() {
 
   return (
     <div className="genz-auth-body">
-      {/* Decorative Blur Background Circles */}
-      <div className="auth-bg-circle bg-purple"></div>
-      <div className="auth-bg-circle bg-cyan"></div>
-      <div className="auth-bg-circle bg-pink"></div>
-
       <div className="genz-auth-card-wrapper">
         <div className="genz-auth-card">
           {/* Logo */}
@@ -140,7 +135,7 @@ function Login() {
 
           {/* Heading */}
           <div className="mb-6 text-center">
-            <h1 className="font-semibold text-2xl tracking-tight text-white mb-2">
+            <h1 className="font-semibold text-2xl tracking-tight text-[var(--ios-text)] mb-2">
               Welcome Back
             </h1>
             <p className="text-[var(--dash-subtitle)] text-sm">
@@ -266,13 +261,13 @@ function Login() {
             <button
               type="button"
               onClick={() => setShowForgotModal(false)}
-              className="absolute top-4 right-4 text-white/50 hover:text-white text-xl cursor-pointer"
+              className="absolute top-4 right-4 text-[var(--ios-text-secondary)] hover:text-[var(--ios-text)] text-xl cursor-pointer"
             >
               &times;
             </button>
 
             <div className="flex flex-col gap-2">
-              <h2 className="text-xl font-bold text-white">
+              <h2 className="text-xl font-bold text-[var(--ios-text)]">
                 Reset Password
               </h2>
               <p className="text-xs text-[var(--dash-subtitle)]">

@@ -19,10 +19,10 @@ function Logo({ size = 28, showText = true }) {
             <stop offset="50%" stopColor="#7000FF" />
             <stop offset="100%" stopColor="#FF007A" />
           </linearGradient>
-          {/* Sleek Glass White Gradient */}
+          {/* Sleek Glass White Gradient with Icy Tint */}
           <linearGradient id="glass-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="rgba(255, 255, 255, 0.9)" />
-            <stop offset="100%" stopColor="rgba(255, 255, 255, 0.4)" />
+            <stop offset="0%" stopColor="rgba(255, 255, 255, 0.95)" />
+            <stop offset="100%" stopColor="rgba(224, 242, 254, 0.5)" />
           </linearGradient>
           {/* Dark theme shadow */}
           <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
@@ -44,22 +44,22 @@ function Logo({ size = 28, showText = true }) {
         />
         
         {/* Jetpack Outer Thruster Bodies (L & R) */}
-        <rect x="25" y="28" width="16" height="42" rx="8" fill="url(#glass-grad)" stroke="rgba(255, 255, 255, 0.35)" strokeWidth="1.5" />
-        <rect x="59" y="28" width="16" height="42" rx="8" fill="url(#glass-grad)" stroke="rgba(255, 255, 255, 0.35)" strokeWidth="1.5" />
+        <rect x="25" y="28" width="16" height="42" rx="8" fill="url(#glass-grad)" stroke="rgba(15, 23, 42, 0.12)" strokeWidth="1.5" />
+        <rect x="59" y="28" width="16" height="42" rx="8" fill="url(#glass-grad)" stroke="rgba(15, 23, 42, 0.12)" strokeWidth="1.5" />
         
         {/* Jetpack Center Body Harness */}
-        <rect x="39" y="23" width="22" height="37" rx="5" fill="rgba(255, 255, 255, 0.15)" stroke="rgba(255, 255, 255, 0.25)" strokeWidth="1.2" />
+        <rect x="39" y="23" width="22" height="37" rx="5" fill="rgba(15, 23, 42, 0.03)" stroke="rgba(15, 23, 42, 0.1)" strokeWidth="1.2" />
         
         {/* Connecting Tubes */}
-        <path d="M41 41 H59" stroke="rgba(255, 255, 255, 0.5)" strokeWidth="2" />
+        <path d="M41 41 H59" stroke="rgba(15, 23, 42, 0.18)" strokeWidth="2" />
         
         {/* Core Power Node */}
         <circle cx="50" cy="41" r="5" fill="#00F0FF" filter="url(#glow)" />
       </svg>
 
       {showText && (
-        <span className="logo-text font-bold tracking-[1.5px]" style={{ fontSize: '18px', textTransform: 'lowercase', fontFamily: "'Space Grotesk', sans-serif" }}>
-          jetpack<span style={{ color: '#00F0FF' }}>.</span>
+        <span className="logo-text font-bold tracking-[1.5px] text-[var(--ios-text)]" style={{ fontSize: '18px', textTransform: 'lowercase', fontFamily: "'Space Grotesk', sans-serif" }}>
+          jetpack<span style={{ color: '#0071E3' }}>.</span>
         </span>
       )}
     </div>

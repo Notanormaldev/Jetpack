@@ -47,11 +47,6 @@ function JetpackPanel() {
 
   return (
     <div className="jetpack-panel-root">
-      {/* Decorative Blur Background Circles */}
-      <div className="glass-bg-circle bg-purple"></div>
-      <div className="glass-bg-circle bg-cyan"></div>
-      <div className="glass-bg-circle bg-pink"></div>
-
       <div className="jetpack-panel-container">
         {/* Header Section */}
         <header className="jetpack-header">

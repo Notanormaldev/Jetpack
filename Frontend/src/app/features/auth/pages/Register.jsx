@@ -159,11 +159,6 @@ function Register() {
 
   return (
     <div className="genz-auth-body">
-      {/* Decorative Blur Background Circles */}
-      <div className="auth-bg-circle bg-purple"></div>
-      <div className="auth-bg-circle bg-cyan"></div>
-      <div className="auth-bg-circle bg-pink"></div>
-
       <div className="genz-auth-card-wrapper">
         <div className="genz-auth-card">
           {/* Logo */}
@@ -173,7 +168,7 @@ function Register() {
 
           {/* Header */}
           <div className="mb-6 text-center">
-            <h1 className="font-semibold text-2xl tracking-tight text-white mb-2">
+            <h1 className="font-semibold text-2xl tracking-tight text-[var(--ios-text)] mb-2">
               {step === 1 ? 'Create Account' : 'Verify Email'}
             </h1>
             <p className="text-[var(--dash-subtitle)] text-sm">
