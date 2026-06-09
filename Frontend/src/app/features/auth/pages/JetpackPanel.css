@@ -37,11 +37,11 @@
 /* ════════ MAIN CONTAINER ════════ */
 .jetpack-panel-container {
   width: 100%;
-  max-width: 580px;
+  max-width: 660px;
   background: var(--ios-glass);
   border: 1px solid var(--ios-glass-border);
   border-radius: 16px;
-  padding: 32px 28px;
+  padding: 40px 36px;
   z-index: 10;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05),
               0 10px 15px -3px rgba(0, 0, 0, 0.03);
