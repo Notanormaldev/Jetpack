@@ -1,17 +1,17 @@
 import { useDispatch, useSelector } from "react-redux"
-import { getme, login, register, verifyOtp, becomeSellerApi, becomeDeliveryApi, updateSettingsApi, forgotPasswordApi, resetPasswordApi, logoutApi, deleteAccountApi } from "../services/auth.api"
+import { getme, login, register, verifyOtp, forgotPasswordApi, resetPasswordApi, logoutApi, deleteAccountApi } from "../services/auth.api"
 import { seterror, setloading, setuser } from "../auth.slice"
 
 export const useauth = () => {
     const dispatch = useDispatch()
     const { user, loading, error } = useSelector((state) => state.auth)
  
-    async function handleregister({email,fullname,password,isseller=false})
+    async function handleregister({email,fullname,password})
     { 
       dispatch(setloading(true))
       dispatch(seterror(null))
       try {
-        const data = await register({email,password,fullname,isseller})
+        const data = await register({email,password,fullname})
         dispatch(setloading(false))
         return { success: true, requiresOtp: data.requiresOtp, data }
       } catch (err) {
@@ -67,75 +67,6 @@ export const useauth = () => {
         return { success: true, data }
       } catch (err) {
         console.log("GetMe error:", err)
-        dispatch(seterror(err))
-        dispatch(setloading(false))
-        throw err
-      }
-    }
-
-    async function handlegoogleauth(token)
-    {
-      dispatch(setloading(true))
-      dispatch(seterror(null))
-      try {
-        // This function needs to be implemented based on your backend Google auth endpoint
-        console.log("Google auth token:", token)
-        // const data = await googleLogin({token})
-        // dispatch(setuser(data.user))
-        dispatch(setloading(false))
-        return { success: true }
-      } catch (err) {
-        console.log("Google auth error:", err)
-        dispatch(seterror(err))
-        dispatch(setloading(false))
-        throw err
-      }
-    }
-
-
-
-    async function handlebecomeseller() {
-      dispatch(setloading(true))
-      dispatch(seterror(null))
-      try {
-        const data = await becomeSellerApi()
-        dispatch(setuser(data.user))
-        dispatch(setloading(false))
-        return { success: true, data }
-      } catch (err) {
-        console.log("Become seller error:", err)
-        dispatch(seterror(err))
-        dispatch(setloading(false))
-        throw err
-      }
-    }
-
-    async function handlebecomedelivery({ city, pincode }) {
-      dispatch(setloading(true))
-      dispatch(seterror(null))
-      try {
-        const data = await becomeDeliveryApi({ city, pincode })
-        dispatch(setuser(data.user))
-        dispatch(setloading(false))
-        return { success: true, data }
-      } catch (err) {
-        console.log("Become delivery error:", err)
-        dispatch(seterror(err))
-        dispatch(setloading(false))
-        throw err
-      }
-    }
-
-    async function handleupdatesettings(settings) {
-      dispatch(setloading(true))
-      dispatch(seterror(null))
-      try {
-        const data = await updateSettingsApi(settings)
-        dispatch(setuser(data.user))
-        dispatch(setloading(false))
-        return { success: true, data }
-      } catch (err) {
-        console.log("Update settings error:", err)
         dispatch(seterror(err))
         dispatch(setloading(false))
         throw err
@@ -211,15 +142,10 @@ export const useauth = () => {
         handleregister,
         handlelogin,
         handlegetme,
-        handlegoogleauth,
         handleverifyotp,
-        handlebecomeseller,
-        handlebecomedelivery,
-        handleupdatesettings,
         handleforgotpassword,
         handleresetpassword,
         handlelogout,
         handledeleteaccount
     }
 }
-

@@ -1,449 +1,422 @@
 import config from "../config/config.js"
 import usermodel from "../models/user.model.js"
 import jwt from "jsonwebtoken"
-import { OAuth2Client } from 'google-auth-library'
-import { sendEmail } from "../services/mailer.service.js"
-import { sendOtpEmail,generateOtp } from "../utils/sendotp.js"
+import { sendOtpEmail, generateOtp } from "../utils/sendotp.js"
 import redis from "../config/cache.js"
 
+async function tokenresponse(user, res, msg) {
+  // Access Token (Expires in 15m)
+  const accessToken = jwt.sign(
+    {
+      id: user._id,
+      user: { _id: user._id, email: user.email, role: user.role, fullname: user.fullname }
+    },
+    config.JWT_ACCESS_SECRET,
+    { expiresIn: '15m' }
+  )
 
+  // Refresh Token (Expires in 7d)
+  const refreshToken = jwt.sign(
+    { id: user._id },
+    config.JWT_REFRESH_SECRET,
+    { expiresIn: '7d' }
+  )
 
+  const cookieOptions = {
+    httpOnly: true,
+    secure: config.NODE_ENVIRONMENT === 'production',
+    sameSite: config.NODE_ENVIRONMENT === 'production' ? 'none' : 'lax',
+    path: '/'
+  }
 
-async function tokenresponse(user,res,msg){
-   const token = jwt.sign({
-    id:user._id,
-    user:user
-   },config.JWT,{expiresIn:'7d'})
+  // Set cookies
+  res.cookie('accessToken', accessToken, { ...cookieOptions, maxAge: 15 * 60 * 1000 })
+  res.cookie('refreshToken', refreshToken, { ...cookieOptions, maxAge: 7 * 24 * 60 * 60 * 1000 })
 
-   res.cookie('token',token)
-   
-   user.password=undefined
-   return res.status(201).json({
+  user.password = undefined
+  return res.status(201).json({
     msg,
-    success:true,
-    user:user
-   })
-
+    success: true,
+    user: user
+  })
 }
-async function register(req,res){
-   const { email,fullname, password, isseller } = req.body;
+
+async function register(req, res) {
+  const { email, fullname, password } = req.body
 
   try {
-    const existuser = await usermodel.findOne({
-      $or: [{ email }]
-    });
+    const existuser = await usermodel.findOne({ email })
 
-   
     if (existuser && !existuser.isverified) {
-      const otp = generateOtp();
-      const otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
+      const otp = generateOtp()
+      const otpExpiry = new Date(Date.now() + 10 * 60 * 1000)
 
-      await usermodel.findByIdAndUpdate(existuser._id, { otp, otpExpiry });
-      await sendOtpEmail(existuser.email, otp);
+      await usermodel.findByIdAndUpdate(existuser._id, { otp, otpExpiry })
+      await sendOtpEmail(existuser.email, otp)
 
       return res.status(200).json({
         msg: "OTP resent to your email, please verify",
         success: true,
         requiresOtp: true,
-        email,
-      });
+        email
+      })
     }
 
     if (existuser && existuser.isverified) {
       return res.status(400).json({
-        msg: "User with this email or contact already exists"
-      });
+        msg: "User with this email already exists"
+      })
     }
 
-
-    const otp = generateOtp();
-    const otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
+    const otp = generateOtp()
+    const otpExpiry = new Date(Date.now() + 10 * 60 * 1000)
 
     await usermodel.create({
-      email, fullname, password,
+      email,
+      fullname,
+      password,
       role: "buyer",
       otp,
       otpExpiry,
-      isverified: false,
-    });
+      isverified: false
+    })
 
-    await sendOtpEmail(email, otp);
+    await sendOtpEmail(email, otp)
 
     return res.status(200).json({
       msg: "OTP sent to your email, please verify",
       success: true,
       requiresOtp: true,
-      email,
-    });
-
+      email
+    })
   } catch (error) {
-    console.log(error);
-    return res.status(500).json({ msg: "Server error" });
+    console.log(error)
+    return res.status(500).json({ msg: "Server error" })
   }
 }
+
 async function verifyotp(req, res) {
-  const { email, otp } = req.body;
+  const { email, otp } = req.body
 
   try {
-    const user = await usermodel.findOne({ email });
+    const user = await usermodel.findOne({ email })
 
     if (!user) {
-      return res.status(400).json({ msg: "User not found, please register again" });
+      return res.status(400).json({ msg: "User not found, please register again" })
     }
 
     if (user.isverified) {
-      return res.status(400).json({ msg: "Already verified, please login" });
+      return res.status(400).json({ msg: "Already verified, please login" })
     }
 
     if (user.otp !== otp) {
-      return res.status(401).json({ msg: "Invalid OTP" });
+      return res.status(401).json({ msg: "Invalid OTP" })
     }
 
     if (user.otpExpiry < new Date()) {
-      return res.status(401).json({ msg: "OTP expired, please register again" });
+      return res.status(401).json({ msg: "OTP expired, please register again" })
     }
 
     await usermodel.findByIdAndUpdate(user._id, {
       isverified: true,
       otp: null,
-      otpExpiry: null,
-    });
+      otpExpiry: null
+    })
 
-    const verifiedUser = await usermodel.findById(user._id);
-    await tokenresponse(verifiedUser, res, "Registration successful");
-
+    const verifiedUser = await usermodel.findById(user._id)
+    await tokenresponse(verifiedUser, res, "Registration successful")
   } catch (error) {
-    console.log(error);
-    return res.status(500).json({ msg: "Server error" });
+    console.log(error)
+    return res.status(500).json({ msg: "Server error" })
   }
 }
-async function login(req,res){
-  const {email,password} = req.body
+
+async function login(req, res) {
+  const { email, password } = req.body
 
   try {
-    
-  const user = await usermodel.findOne({
-    $or:[
-        {email}
-    ]
-  }).select('+password')
+    const user = await usermodel.findOne({ email }).select('+password')
 
-  if(!user){
-    return res.status(400).json({
-        msg:"user not exist please register"
-    })
-  }
+    if (!user) {
+      return res.status(400).json({
+        msg: "User does not exist, please register"
+      })
+    }
 
-  const isvalid = await user.comparePassword(password);
+    const isvalid = await user.comparePassword(password)
 
-  if(!isvalid){
-    return res.status(401).json({
-   msg:"Invalid password"
-    })
-  }
-    await tokenresponse(user,res,"Login successfully")
-    
-  
+    if (!isvalid) {
+      return res.status(401).json({
+        msg: "Invalid password"
+      })
+    }
 
+    await tokenresponse(user, res, "Login successful")
   } catch (error) {
-      console.log(error);
+    console.log(error)
     return res.status(500).json({
-        msg:"server error"
+      msg: "Server error"
     })
   }
 }
-async function getme(req,res){
-     const decoded = req.user
 
-     try {
-        const user = await usermodel.findById(decoded.id)
+async function getme(req, res) {
+  const decoded = req.user
 
-     if(!user){
-        return res.status(404).json({
-            success:false,
-            msg:"user not exist"
-        })
-     }
+  try {
+    const user = await usermodel.findById(decoded.id)
 
-
-     return res.status(200).json({
-        success:true,
-        user:user
-     })
-     } catch (error) {
-         console.log(error);
-
-        return res.status(500).json({
-            success: false,
-            msg: "Internal server error"
-        });
-     }
-}
-async function googlecallback(req,res){
-  // console.log(req.user);
-  
-  const {emails,id,displayName,photos} = req.user
-  const email=emails[0].value
-  const profilepic=photos[0].value
-  const isverified=emails[0].verified
-
-  let user = await usermodel.findOne({email})
-
-  if(!user){
-     user = await usermodel.create({
-      email:email,
-      fullname:displayName,
-      profilepic:profilepic,
-      isverified:isverified,
-      googleid:id
-    })
-  }
-
-
-  const token=jwt.sign({
-    id:user._id,
-    user:user
-  },config.JWT,{expiresIn:"7d"})
-  res.cookie('token',token)
-   if(user.role === "seller"){
-       res.redirect("http://localhost:5173/dashbord/seller")
-    }else{
-       res.redirect("http://localhost:5173")
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        msg: "User does not exist"
+      })
     }
-}
-async function logout(req,res){
-  const token = req.cookies.token;
-  res.clearCookie('token');
-  await redis.set(token,Date.now().toString(),'EX',3600)
-
-   res.clearCookie('token', {
-    httpOnly: true,
-    secure: true,        
-    sameSite: 'none',    
-    path: '/'            
-  });
-  return res.status(200).json({
-    msg:"logout sucessfully"
-  })
-}
-async function deleteaccount(req,res){
-    const id = req.user.id
-    const token = req.cookies.token;
-
-    const finduser = await usermodel.findById(id)
-
-    if(!finduser){
-        return res.status(401).json({
-            msg:"user not exist"
-        })
-    }
-    
-    await usermodel.findByIdAndDelete(id)
-    
-    if (token) {
-        await redis.set(token, Date.now().toString(), 'EX', 3600 * 24 * 7) // 7 days matching cookie expiration
-    }
-    
-    res.clearCookie('token', {
-        httpOnly: true,
-        secure: true,        
-        sameSite: 'none',    
-        path: '/'            
-    });
 
     return res.status(200).json({
-        msg:"user deleted sucessfully"
+      success: true,
+      user: user
     })
+  } catch (error) {
+    console.log(error)
+    return res.status(500).json({
+      success: false,
+      msg: "Internal server error"
+    })
+  }
 }
 
+async function googlecallback(req, res) {
+  const { emails, id, displayName, photos } = req.user
+  const email = emails[0].value
+  const profilepic = photos[0].value
+  const isverified = emails[0].verified
 
+  let user = await usermodel.findOne({ email })
 
-async function becomeSeller(req, res) {
-    try {
-        const userId = req.user.id;
-        const currentUser = await usermodel.findById(userId);
-        if (!currentUser) {
-            return res.status(404).json({ success: false, msg: "User not found" });
-        }
-        if (currentUser.role === 'delivery') {
-            return res.status(400).json({ success: false, msg: "A Delivery Partner cannot become a Seller. A user can only hold one active partner role." });
-        }
-        const user = await usermodel.findByIdAndUpdate(userId, { role: 'seller' }, { new: true });
-        if (!user) {
-            return res.status(404).json({ success: false, msg: "User not found" });
-        }
-        
-        // Regenerate token to include updated role in user payload
-        const token = jwt.sign({
-            id: user._id,
-            user: user
-        }, config.JWT, { expiresIn: '7d' });
-        
-        res.cookie('token', token);
-        
-        return res.status(200).json({
-            success: true,
-            msg: "Successfully updated profile to Seller Atelier role",
-            user
-        });
-    } catch (error) {
-        console.error("becomeSeller Error:", error);
-        return res.status(500).json({ success: false, msg: "Failed to update profile to seller" });
-    }
+  if (!user) {
+    user = await usermodel.create({
+      email: email,
+      fullname: displayName,
+      profilepic: profilepic,
+      isverified: isverified,
+      googleid: id
+    })
+  }
+
+  const accessToken = jwt.sign(
+    {
+      id: user._id,
+      user: { _id: user._id, email: user.email, role: user.role, fullname: user.fullname }
+    },
+    config.JWT_ACCESS_SECRET,
+    { expiresIn: '15m' }
+  )
+
+  const refreshToken = jwt.sign(
+    { id: user._id },
+    config.JWT_REFRESH_SECRET,
+    { expiresIn: '7d' }
+  )
+
+  const cookieOptions = {
+    httpOnly: true,
+    secure: config.NODE_ENVIRONMENT === 'production',
+    sameSite: config.NODE_ENVIRONMENT === 'production' ? 'none' : 'lax',
+    path: '/'
+  }
+
+  res.cookie('accessToken', accessToken, { ...cookieOptions, maxAge: 15 * 60 * 1000 })
+  res.cookie('refreshToken', refreshToken, { ...cookieOptions, maxAge: 7 * 24 * 60 * 60 * 1000 })
+
+  res.redirect(config.NODE_ENVIRONMENT === "development" ? 'http://localhost:5173' : '/')
+}
+
+async function logout(req, res) {
+  const accessToken = req.cookies.accessToken
+  const refreshToken = req.cookies.refreshToken
+
+  if (accessToken) {
+    await redis.set(accessToken, Date.now().toString(), 'EX', 15 * 60)
+  }
+  if (refreshToken) {
+    await redis.set(refreshToken, Date.now().toString(), 'EX', 3600 * 24 * 7)
+  }
+
+  const cookieOptions = {
+    httpOnly: true,
+    secure: config.NODE_ENVIRONMENT === 'production',
+    sameSite: config.NODE_ENVIRONMENT === 'production' ? 'none' : 'lax',
+    path: '/'
+  }
+
+  res.clearCookie('accessToken', cookieOptions)
+  res.clearCookie('refreshToken', cookieOptions)
+
+  return res.status(200).json({
+    msg: "Logout successful"
+  })
+}
+
+async function deleteaccount(req, res) {
+  const id = req.user.id
+  const accessToken = req.cookies.accessToken
+  const refreshToken = req.cookies.refreshToken
+
+  const finduser = await usermodel.findById(id)
+
+  if (!finduser) {
+    return res.status(401).json({
+      msg: "User does not exist"
+    })
+  }
+
+  await usermodel.findByIdAndDelete(id)
+
+  if (accessToken) {
+    await redis.set(accessToken, Date.now().toString(), 'EX', 15 * 60)
+  }
+  if (refreshToken) {
+    await redis.set(refreshToken, Date.now().toString(), 'EX', 3600 * 24 * 7)
+  }
+
+  const cookieOptions = {
+    httpOnly: true,
+    secure: config.NODE_ENVIRONMENT === 'production',
+    sameSite: config.NODE_ENVIRONMENT === 'production' ? 'none' : 'lax',
+    path: '/'
+  }
+
+  res.clearCookie('accessToken', cookieOptions)
+  res.clearCookie('refreshToken', cookieOptions)
+
+  return res.status(200).json({
+    msg: "User deleted successfully"
+  })
 }
 
 async function forgotPassword(req, res) {
-    try {
-        const { email } = req.body;
-        if (!email) {
-            return res.status(400).json({ success: false, msg: "Email is required" });
-        }
-
-        const user = await usermodel.findOne({ email });
-        if (!user) {
-            return res.status(404).json({ success: false, msg: "No user found with this email" });
-        }
-
-        const otp = generateOtp();
-        const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
-
-        user.otp = otp;
-        user.otpExpiry = otpExpiry;
-        await user.save();
-
-        await sendOtpEmail(email, otp);
-
-        return res.status(200).json({
-            success: true,
-            msg: "OTP sent to your email for password reset"
-        });
-    } catch (error) {
-        console.error("forgotPassword Error:", error);
-        return res.status(500).json({ success: false, msg: "Server error during password reset request" });
+  try {
+    const { email } = req.body
+    if (!email) {
+      return res.status(400).json({ success: false, msg: "Email is required" })
     }
+
+    const user = await usermodel.findOne({ email })
+    if (!user) {
+      return res.status(404).json({ success: false, msg: "No user found with this email" })
+    }
+
+    const otp = generateOtp()
+    const otpExpiry = new Date(Date.now() + 10 * 60 * 1000)
+
+    user.otp = otp
+    user.otpExpiry = otpExpiry
+    await user.save()
+
+    await sendOtpEmail(email, otp)
+
+    return res.status(200).json({
+      success: true,
+      msg: "OTP sent to your email for password reset"
+    })
+  } catch (error) {
+    console.error("forgotPassword Error:", error)
+    return res.status(500).json({ success: false, msg: "Server error during password reset" })
+  }
 }
 
 async function resetPassword(req, res) {
-    try {
-        const { email, otp, newPassword } = req.body;
-        if (!email || !otp || !newPassword) {
-            return res.status(400).json({ success: false, msg: "All fields (email, OTP, new password) are required" });
-        }
-
-        const user = await usermodel.findOne({ email });
-        if (!user) {
-            return res.status(404).json({ success: false, msg: "User not found" });
-        }
-
-        if (user.otp !== otp) {
-            return res.status(401).json({ success: false, msg: "Invalid OTP" });
-        }
-
-        if (user.otpExpiry < new Date()) {
-            return res.status(401).json({ success: false, msg: "OTP has expired" });
-        }
-
-        // Reset details and trigger schema pre-save password hashing
-        user.password = newPassword;
-        user.otp = null;
-        user.otpExpiry = null;
-        await user.save();
-
-        return res.status(200).json({
-            success: true,
-            msg: "Password updated successfully, please login"
-        });
-    } catch (error) {
-        console.error("resetPassword Error:", error);
-        return res.status(500).json({ success: false, msg: "Server error during password reset" });
+  try {
+    const { email, otp, newPassword } = req.body
+    if (!email || !otp || !newPassword) {
+      return res.status(400).json({ success: false, msg: "All fields are required" })
     }
+
+    const user = await usermodel.findOne({ email })
+    if (!user) {
+      return res.status(404).json({ success: false, msg: "User not found" })
+    }
+
+    if (user.otp !== otp) {
+      return res.status(401).json({ success: false, msg: "Invalid OTP" })
+    }
+
+    if (user.otpExpiry < new Date()) {
+      return res.status(401).json({ success: false, msg: "OTP has expired" })
+    }
+
+    user.password = newPassword
+    user.otp = null
+    user.otpExpiry = null
+    await user.save()
+
+    return res.status(200).json({
+      success: true,
+      msg: "Password updated successfully, please login"
+    })
+  } catch (error) {
+    console.error("resetPassword Error:", error)
+    return res.status(500).json({ success: false, msg: "Server error during password reset" })
+  }
 }
 
-async function becomeDelivery(req, res) {
-    try {
-        const userId = req.user.id;
-        const { city, pincode } = req.body;
-        if (!city || !pincode) {
-            return res.status(400).json({ success: false, msg: "City and pincode are required to register as a Delivery Partner" });
-        }
-        const currentUser = await usermodel.findById(userId);
-        if (!currentUser) {
-            return res.status(404).json({ success: false, msg: "User not found" });
-        }
-        if (currentUser.role === 'seller') {
-            return res.status(400).json({ success: false, msg: "A Seller cannot become a Delivery Partner. A user can only hold one active partner role." });
-        }
-        const user = await usermodel.findByIdAndUpdate(userId, { role: 'delivery', city, pincode }, { new: true });
-        if (!user) {
-            return res.status(404).json({ success: false, msg: "User not found" });
-        }
-        
-        // Regenerate token to include updated role in user payload
-        const token = jwt.sign({
-            id: user._id,
-            user: user
-        }, config.JWT, { expiresIn: '7d' });
-        
-        res.cookie('token', token);
-        
-        return res.status(200).json({
-            success: true,
-            msg: "Successfully updated profile to Delivery Partner role",
-            user
-        });
-    } catch (error) {
-        console.error("becomeDelivery Error:", error);
-        return res.status(500).json({ success: false, msg: "Failed to update profile to delivery partner" });
-    }
-}
+async function refresh(req, res) {
+  const refreshToken = req.cookies.refreshToken
+  if (!refreshToken) {
+    return res.status(401).json({ success: false, msg: "Refresh token is missing" })
+  }
 
-async function updateSettings(req, res) {
-    try {
-        const userId = req.user.id;
-        const { fullname, contact, address, city, pincode } = req.body;
-        
-        const updateFields = {};
-        if (fullname !== undefined) updateFields.fullname = fullname;
-        if (contact !== undefined) updateFields.contact = contact;
-        if (address !== undefined) updateFields.address = address;
-        if (city !== undefined) updateFields.city = city;
-        if (pincode !== undefined) updateFields.pincode = pincode;
-        
-        const user = await usermodel.findByIdAndUpdate(userId, updateFields, { new: true });
-        if (!user) {
-            return res.status(404).json({ success: false, msg: "User not found" });
-        }
-        
-        // Regenerate token to include updated fields
-        const token = jwt.sign({
-            id: user._id,
-            user: user
-        }, config.JWT, { expiresIn: '7d' });
-        
-        res.cookie('token', token);
-        
-        return res.status(200).json({
-            success: true,
-            msg: "Settings updated successfully",
-            user
-        });
-    } catch (error) {
-        console.error("updateSettings Error:", error);
-        return res.status(500).json({ success: false, msg: "Failed to update settings" });
+  try {
+    const isBlacklisted = await redis.get(refreshToken)
+    if (isBlacklisted) {
+      return res.status(401).json({ success: false, msg: "Session expired, please login again" })
     }
+
+    const decoded = jwt.verify(refreshToken, config.JWT_REFRESH_SECRET)
+    const user = await usermodel.findById(decoded.id)
+    if (!user) {
+      return res.status(401).json({ success: false, msg: "User not found" })
+    }
+
+    const newAccessToken = jwt.sign(
+      {
+        id: user._id,
+        user: { _id: user._id, email: user.email, role: user.role, fullname: user.fullname }
+      },
+      config.JWT_ACCESS_SECRET,
+      { expiresIn: '15m' }
+    )
+
+    const cookieOptions = {
+      httpOnly: true,
+      secure: config.NODE_ENVIRONMENT === 'production',
+      sameSite: config.NODE_ENVIRONMENT === 'production' ? 'none' : 'lax',
+      path: '/'
+    }
+
+    res.cookie('accessToken', newAccessToken, { ...cookieOptions, maxAge: 15 * 60 * 1000 })
+
+    return res.status(200).json({
+      success: true,
+      msg: "Token refreshed successfully",
+      user: user
+    })
+  } catch (error) {
+    console.log("Refresh token error:", error)
+    return res.status(401).json({ success: false, msg: "Invalid or expired refresh token" })
+  }
 }
 
 export default {
-    register,
-    login,
-    getme,
-    googlecallback,
-    verifyotp,
-    logout,
-    deleteaccount,
-    becomeSeller,
-    becomeDelivery,
-    updateSettings,
-    forgotPassword,
-    resetPassword
+  register,
+  login,
+  getme,
+  googlecallback,
+  verifyotp,
+  logout,
+  deleteaccount,
+  forgotPassword,
+  resetPassword,
+  refresh
 }

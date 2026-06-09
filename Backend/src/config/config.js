@@ -26,7 +26,8 @@ requireenvs.forEach((key)=>{
 
  const config={
     MONGOURI:process.env.MONGO_URI ,
-    JWT:process.env.JWT,
+    JWT_ACCESS_SECRET:process.env.JWT_ACCESS_SECRET || process.env.JWT,
+    JWT_REFRESH_SECRET:process.env.JWT_REFRESH_SECRET || (process.env.JWT + "_refresh"),
     GOOGLE_CLIENT_ID:process.env.GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET:process.env.GOOGLE_CLIENT_SECRET,
     BREVO_API_KEY:process.env.BREVO_API_KEY,
@@ -34,9 +35,6 @@ requireenvs.forEach((key)=>{
     REDIS_HOST:process.env.REDIS_HOST,
     REDIS_PORT:process.env.REDIS_PORT,
     REDIS_PASSWORD:process.env.REDIS_PASSWORD,
-    IMAGEKIT_PRIVATE_KEY:process.env.IMAGEKIT_PRIVATE_KEY || "",
-    RAZORPAY_KEY_ID:process.env.RAZORPAY_KEY_ID || "",
-    RAZORPAY_KEY_SECRET:process.env.RAZORPAY_KEY_SECRET || "",
     NODE_ENVIRONMENT:process.env.NODE_ENVIRONMENT
 }
 
