@@ -12,28 +12,29 @@ function Logo({ size = 28, showText = true }) {
         xmlns="http://www.w3.org/2000/svg"
         className="logo-icon-svg"
       >
-        {/* Engine Flames (Apple Blue Boosters) */}
-        <path
-          d="M31 68 L31 82 L27 75 Z"
-          fill="#0071E3"
-        />
-        <path
-          d="M69 68 L69 82 L65 75 Z"
-          fill="#0071E3"
-        />
+        <defs>
+          <linearGradient id="jetpack-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#0071E3" />
+            <stop offset="100%" stopColor="#7000FF" />
+          </linearGradient>
+        </defs>
         
-        {/* Jetpack Cylinders (L & R) */}
-        <rect x="22" y="26" width="18" height="42" rx="9" fill="#FFFFFF" stroke="#0F172A" strokeWidth="3.5" />
-        <rect x="60" y="26" width="18" height="42" rx="9" fill="#FFFFFF" stroke="#0F172A" strokeWidth="3.5" />
+        {/* Parallel Booster Cylinders with Gradient & Bold Stroke */}
+        <rect x="23" y="20" width="18" height="46" rx="9" fill="url(#jetpack-gradient)" stroke="#0F172A" strokeWidth="4" />
+        <rect x="59" y="20" width="18" height="46" rx="9" fill="url(#jetpack-gradient)" stroke="#0F172A" strokeWidth="4" />
         
-        {/* Center Harness Bridge */}
-        <rect x="38" y="20" width="24" height="35" rx="6" fill="#FFFFFF" stroke="#0F172A" strokeWidth="3.5" />
-        
-        {/* Connection Tubes */}
-        <path d="M40 38 H60" stroke="#0F172A" strokeWidth="3.5" strokeLinecap="round" />
+        {/* Center Control Core */}
+        <rect x="38" y="15" width="24" height="30" rx="6" fill="#FFFFFF" stroke="#0F172A" strokeWidth="4" />
         
         {/* Core Power Node */}
-        <circle cx="50" cy="38" r="4.5" fill="#0071E3" />
+        <circle cx="50" cy="30" r="3.5" fill="#0071E3" />
+        
+        {/* Connector Bridge */}
+        <path d="M41 36 H59" stroke="#0F172A" strokeWidth="4" strokeLinecap="round" />
+        
+        {/* Minimalist Launch Flame Trails */}
+        <path d="M32 72 V86" stroke="#0071E3" strokeWidth="4.5" strokeLinecap="round" />
+        <path d="M68 72 V86" stroke="#0071E3" strokeWidth="4.5" strokeLinecap="round" />
       </svg>
 
       {showText && (
