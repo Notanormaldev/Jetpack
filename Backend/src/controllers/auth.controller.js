@@ -379,6 +379,7 @@ async function refresh(req, res) {
       return res.status(401).json({ success: false, msg: "User not found" })
     }
 
+    // 1. Generate new Access Token (15m)
     const newAccessToken = jwt.sign(
       {
         id: user._id,
@@ -388,6 +389,16 @@ async function refresh(req, res) {
       { expiresIn: '15m' }
     )
 
+    // 2. Generate new Refresh Token (Rotates validity for another 7d)
+    const newRefreshToken = jwt.sign(
+      { id: user._id },
+      config.JWT_REFRESH_SECRET,
+      { expiresIn: '7d' }
+    )
+
+    // 3. Blacklist old refresh token in Redis (prevent replay attacks)
+    await redis.set(refreshToken, Date.now().toString(), 'EX', 3600 * 24 * 7)
+
     const cookieOptions = {
       httpOnly: true,
       secure: config.NODE_ENVIRONMENT === 'production',
@@ -395,11 +406,13 @@ async function refresh(req, res) {
       path: '/'
     }
 
+    // 4. Update cookies
     res.cookie('accessToken', newAccessToken, { ...cookieOptions, maxAge: 15 * 60 * 1000 })
+    res.cookie('refreshToken', newRefreshToken, { ...cookieOptions, maxAge: 7 * 24 * 60 * 60 * 1000 })
 
     return res.status(200).json({
       success: true,
-      msg: "Token refreshed successfully",
+      msg: "Tokens rotated successfully",
       user: user
     })
   } catch (error) {
