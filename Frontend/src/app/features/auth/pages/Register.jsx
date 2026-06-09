@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import toast from 'react-hot-toast'
 import Logo from '../components/Logo'
 import GoogleSignInButton from '../components/GoogleSignInButton'
 import { useauth } from '../hook/useauth'
@@ -21,7 +22,6 @@ function Register() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
-  const [error, setError] = useState('')
 
   // Step 2: OTP verification
   const [step, setStep] = useState(1) // 1 = register form, 2 = OTP screen
@@ -43,33 +43,32 @@ function Register() {
 
   const handleRegisterSubmit = async (e) => {
     e.preventDefault()
-    setError('')
 
     // Client-side validations
     if (!fullName) {
-      setError('Full Name is required.')
+      toast.error('Full Name is required.')
       return
     }
     if (fullName.trim().length < 3) {
-      setError('Full Name must be at least 3 characters.')
+      toast.error('Full Name must be at least 3 characters.')
       return
     }
     if (!email) {
-      setError('Email address is required.')
+      toast.error('Email address is required.')
       return
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(email)) {
-      setError('Please enter a valid email address.')
+      toast.error('Please enter a valid email address.')
       return
     }
     if (!password) {
-      setError('Password is required.')
+      toast.error('Password is required.')
       return
     }
     // Simple 8-char validation (can be customized by users of this boilerplate)
     if (password.length < 8) {
-      setError('Password must be at least 8 characters.')
+      toast.error('Password must be at least 8 characters.')
       return
     }
 
@@ -84,28 +83,28 @@ function Register() {
         setOtpEmail(email)
         setStep(2)
         setResendTimer(30)
+        toast.success('Verification code sent to your email!')
       }
     } catch (err) {
       if (err.errors && Array.isArray(err.errors)) {
-        setError(err.errors[0].msg)
+        toast.error(err.errors[0].msg)
       } else if (err.msg) {
-        setError(err.msg)
+        toast.error(err.msg)
       } else {
-        setError('Registration failed. Please try again.')
+        toast.error('Registration failed. Please try again.')
       }
     }
   }
 
   const handleOtpSubmit = async (e) => {
     e.preventDefault()
-    setError('')
 
     if (!otp) {
-      setError('OTP is required.')
+      toast.error('OTP is required.')
       return
     }
     if (otp.length !== 6) {
-      setError('OTP must be 6 digits.')
+      toast.error('OTP must be 6 digits.')
       return
     }
 
@@ -114,26 +113,26 @@ function Register() {
         email: otpEmail,
         otp
       })
+      toast.success('Account verified successfully!')
       navigate('/')
     } catch (err) {
       if (err.msg === 'OTP expired') {
-        setError('OTP expired, please register again')
+        toast.error('OTP expired, please register again')
       } else if (err.msg === 'Account already verified') {
-        setError('Account already exists, please login')
+        toast.error('Account already exists, please login')
       } else if (err.msg === 'Invalid OTP') {
-        setError('Invalid OTP, please try again')
+        toast.error('Invalid OTP, please try again')
       } else if (err.errors && Array.isArray(err.errors)) {
-        setError(err.errors[0].msg)
+        toast.error(err.errors[0].msg)
       } else if (err.msg) {
-        setError(err.msg)
+        toast.error(err.msg)
       } else {
-        setError('Something went wrong, please try again')
+        toast.error('Something went wrong, please try again')
       }
     }
   }
 
   const handleResendOtp = async () => {
-    setError('')
     setResendLoading(true)
 
     try {
@@ -145,12 +144,13 @@ function Register() {
       })
       if (res && res.requiresOtp) {
         setResendTimer(30)
+        toast.success('OTP resent successfully!')
       }
     } catch (err) {
       if (err.msg) {
-        setError(err.msg)
+        toast.error(err.msg)
       } else {
-        setError('Failed to resend OTP, please try again.')
+        toast.error('Failed to resend OTP, please try again.')
       }
     } finally {
       setResendLoading(false)
@@ -182,12 +182,6 @@ function Register() {
             <>
               {/* STEP 1: Registration Form */}
               <form onSubmit={handleRegisterSubmit} className="w-full flex flex-col">
-                {/* Error Message */}
-                {error && (
-                  <div className="p-3 mb-4 rounded-xl bg-red-500/15 border border-red-500/25 text-red-500 text-xs font-semibold uppercase tracking-wider text-center">
-                    {error}
-                  </div>
-                )}
 
                 {/* Full Name */}
                 <div className="auth-input-wrapper">
@@ -276,12 +270,6 @@ function Register() {
             <>
               {/* STEP 2: OTP Verification Form */}
               <form onSubmit={handleOtpSubmit} className="w-full flex flex-col">
-                {/* Error Message */}
-                {error && (
-                  <div className="p-3 mb-4 rounded-xl bg-red-500/15 border border-red-500/25 text-red-500 text-xs font-semibold uppercase tracking-wider text-center">
-                    {error}
-                  </div>
-                )}
 
                 {/* OTP Input */}
                 <div className="auth-input-wrapper">

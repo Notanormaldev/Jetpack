@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import toast from 'react-hot-toast'
 import Logo from '../components/Logo'
 import GoogleSignInButton from '../components/GoogleSignInButton'
 import { useauth } from '../hook/useauth'
@@ -19,7 +20,6 @@ function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
-  const [error, setError] = useState('')
 
   // Forgot password modal state
   const [showForgotModal, setShowForgotModal] = useState(false)
@@ -27,25 +27,21 @@ function Login() {
   const [forgotOtp, setForgotOtp] = useState('')
   const [newForgotPwd, setNewForgotPwd] = useState('')
   const [forgotStep, setForgotStep] = useState(1) // 1 = enter email, 2 = enter otp + reset password
-  const [forgotError, setForgotError] = useState('')
-  const [forgotSuccess, setForgotSuccess] = useState('')
   const [forgotLoading, setForgotLoading] = useState(false)
 
   const handleForgotEmailSubmit = async (e) => {
     e.preventDefault()
-    setForgotError('')
-    setForgotSuccess('')
     if (!forgotEmail) {
-      setForgotError('Please enter your email.')
+      toast.error('Please enter your email.')
       return
     }
     setForgotLoading(true)
     try {
       await handleforgotpassword({ email: forgotEmail })
-      setForgotSuccess('OTP sent successfully to your email.')
+      toast.success('OTP sent successfully to your email.')
       setForgotStep(2)
     } catch (err) {
-      setForgotError(err.msg || 'Failed to send OTP.')
+      toast.error(err.msg || 'Failed to send OTP.')
     } finally {
       setForgotLoading(false)
     }
@@ -53,18 +49,16 @@ function Login() {
 
   const handleForgotResetSubmit = async (e) => {
     e.preventDefault()
-    setForgotError('')
-    setForgotSuccess('')
     if (!forgotOtp) {
-      setForgotError('Please enter the 6-digit OTP.')
+      toast.error('Please enter the 6-digit OTP.')
       return
     }
     if (!newForgotPwd) {
-      setForgotError('Please enter your new password.')
+      toast.error('Please enter your new password.')
       return
     }
     if (newForgotPwd.length < 8) {
-      setForgotError('New password must be at least 8 characters.')
+      toast.error('New password must be at least 8 characters.')
       return
     }
     setForgotLoading(true)
@@ -74,17 +68,16 @@ function Login() {
         otp: forgotOtp,
         newPassword: newForgotPwd
       })
-      setForgotSuccess('Password reset successfully. You can now log in.')
+      toast.success('Password reset successfully! Log in now.')
       setTimeout(() => {
         setShowForgotModal(false)
         setForgotStep(1)
         setForgotEmail('')
         setForgotOtp('')
         setNewForgotPwd('')
-        setForgotSuccess('')
-      }, 2500)
+      }, 2000)
     } catch (err) {
-      setForgotError(err.msg || 'Failed to reset password.')
+      toast.error(err.msg || 'Failed to reset password.')
     } finally {
       setForgotLoading(false)
     }
@@ -92,34 +85,34 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    setError('')
 
     if (!email) {
-      setError('Please enter your email.')
+      toast.error('Please enter your email.')
       return
     }
     if (!password) {
-      setError('Please enter your password.')
+      toast.error('Please enter your password.')
       return
     }
 
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(email)) {
-      setError('Please enter a valid email address.')
+      toast.error('Please enter a valid email address.')
       return
     }
 
     try {
       await handlelogin({ email, password })
+      toast.success('Signed in successfully!')
       navigate('/')
     } catch (err) {
       if (err.errors && Array.isArray(err.errors)) {
-        setError(err.errors[0].msg)
+        toast.error(err.errors[0].msg)
       } else if (err.msg) {
-        setError(err.msg)
+        toast.error(err.msg)
       } else {
-        setError('Login failed. Please check your credentials.')
+        toast.error('Login failed. Please check your credentials.')
       }
     }
   }
@@ -145,12 +138,6 @@ function Login() {
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="w-full flex flex-col">
-            {/* Error Message */}
-            {error && (
-              <div className="p-3 mb-4 rounded-xl bg-red-500/15 border border-red-500/25 text-red-500 text-xs font-semibold uppercase tracking-wider text-center">
-                {error}
-              </div>
-            )}
 
             {/* Email Field */}
             <div className="auth-input-wrapper">
@@ -276,18 +263,6 @@ function Login() {
                   : "Enter the code received and choose your new password."}
               </p>
             </div>
-
-            {forgotError && (
-              <div className="p-3 rounded-xl bg-red-500/15 border border-red-500/20 text-red-500 text-xs font-semibold text-center uppercase tracking-wider">
-                {forgotError}
-              </div>
-            )}
-
-            {forgotSuccess && (
-              <div className="p-3 rounded-xl bg-green-500/15 border border-green-500/20 text-green-500 text-xs font-semibold text-center uppercase tracking-wider">
-                {forgotSuccess}
-              </div>
-            )}
 
             {forgotStep === 1 ? (
               <form onSubmit={handleForgotEmailSubmit} className="flex flex-col gap-4">
