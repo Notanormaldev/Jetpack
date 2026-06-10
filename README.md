@@ -8,18 +8,18 @@
   <img src="https://img.shields.io/badge/JWT-Auth-black?style=for-the-badge&logo=jsonwebtokens" />
 </p>
 
-> **Jetpack** ek hackathon-ready, production-grade authentication boilerplate hai jo developers ko zero se auth setup karne ka jhanjhat bachata hai. Bas clone karo, `.env` fill karo, aur apna actual project banao — baaki sab ready hai.
+> **Jetpack** is a hackathon-ready, production-grade authentication boilerplate. It eliminates the repetitive setup of auth systems so developers can focus on building their actual product — not wiring up JWT, OTP emails, Redis token blacklisting, and Google OAuth from scratch every time.
 
 ---
 
-## 📌 Project Ka Matlab (Why Jetpack?)
+## 📌 Why Jetpack?
 
-Har hackathon mein pehle 2-3 ghante sirf auth setup mein waste ho jaate hain — register, login, OTP, JWT, Google OAuth, password reset... Jetpack in sab ko **already packaged** karke deta hai taaki aap apni unique features pe focus kar sako.
+Every hackathon wastes the first 2–3 hours on the same boilerplate work: register, login, OTP verification, JWT, Google OAuth, password reset. Jetpack packages all of it into a single, ready-to-clone repository with production-level security built in.
 
-**Ye project banaya gaya hai:**
-- 🏆 Hackathon developers ke liye jo time bachana chahte hain
-- 🔒 Production-level security chahne walon ke liye (JWT rotation, Redis blacklisting, Helmet, Rate limiting)
-- 🚀 Full-stack React + Node.js stack use karne walon ke liye
+**Built for:**
+- 🏆 Hackathon developers who need to move fast without sacrificing security
+- 🔒 Projects that require real-world auth security out of the box
+- 🚀 Full-stack teams working with a React + Node.js stack
 
 ---
 
@@ -27,105 +27,109 @@ Har hackathon mein pehle 2-3 ghante sirf auth setup mein waste ho jaate hain —
 
 ```
 Jetpack/
-├── Backend/                    # Express.js API Server
-│   ├── server.js               # Entry point — DB connect & server start
-│   ├── .env                    # Environment variables (git-ignored)
+├── Backend/                        # Express.js API Server
+│   ├── server.js                   # Entry point — connects DB and starts server
+│   ├── .env                        # Environment variables (git-ignored)
 │   └── src/
-│       ├── app.js              # Express app setup (CORS, Helmet, Rate Limit, Passport)
+│       ├── app.js                  # Express app setup (CORS, Helmet, Rate Limit, Passport)
 │       ├── config/
-│       │   ├── config.js       # ENV loader + validation
-│       │   ├── db.js           # MongoDB connection
-│       │   └── cache.js        # Redis (ioredis) connection
+│       │   ├── config.js           # ENV loader with validation
+│       │   ├── db.js               # MongoDB connection
+│       │   └── cache.js            # Redis client (ioredis)
 │       ├── Routes/
-│       │   └── auth.route.js   # All auth API routes
+│       │   └── auth.route.js       # All auth API route definitions
 │       ├── controllers/
 │       │   └── auth.controller.js  # Business logic for all auth flows
 │       ├── models/
-│       │   └── user.model.js   # Mongoose User schema
+│       │   └── user.model.js       # Mongoose User schema with bcrypt hooks
 │       ├── Middleware/
-│       │   └── authtoken.middleware.js  # JWT access token verifier
+│       │   └── authtoken.middleware.js  # JWT access token verifier + Redis blacklist check
 │       ├── services/
-│       │   └── mailer.service.js   # Brevo (email) client setup
+│       │   └── mailer.service.js   # Brevo transactional email client
 │       ├── utils/
-│       │   └── sendotp.js      # OTP generator + email sender
+│       │   └── sendotp.js          # OTP generator and email sender
 │       └── validator/
-│           └── auth.validator.js    # express-validator rules
+│           └── auth.validator.js   # Input validation rules (express-validator)
 │
-└── Frontend/                   # React + Vite App
+└── Frontend/                       # React + Vite Application
     ├── index.html
-    ├── vite.config.js          # Vite config with /api proxy to backend
+    ├── vite.config.js              # Vite config with /api proxy to backend
     └── src/
-        ├── main.jsx            # Root render (Redux Provider + Toast)
+        ├── main.jsx                # Root render (Redux Provider + Toast)
         └── app/
-            ├── App.jsx         # App root — calls getMe on load
-            ├── app.routes.jsx  # React Router routes
-            ├── app.store.js    # Redux store
+            ├── App.jsx             # App root — fetches user session on load
+            ├── app.routes.jsx      # React Router route definitions
+            ├── app.store.js        # Redux store configuration
             └── features/auth/
                 ├── auth.slice.js           # Redux slice (user, loading, error)
-                ├── hook/useauth.js         # Custom hook — all auth actions
-                ├── services/auth.api.js    # Axios instance + interceptors
+                ├── hook/useauth.js         # Custom hook for all auth actions
+                ├── services/auth.api.js    # Axios instance with interceptors
                 ├── pages/
-                │   ├── Login.jsx           # Login + Forgot Password flow
-                │   ├── Register.jsx        # Register + OTP verification flow
-                │   ├── JetpackPanel.jsx    # Protected dashboard
-                │   ├── Auth.css            # Auth pages styling
-                │   ├── JetpackPanel.css    # Dashboard styling
-                │   └── NotFound.jsx        # 404 page
+                │   ├── Login.jsx           # Login page with Forgot Password flow
+                │   ├── Register.jsx        # Registration page with OTP verification
+                │   ├── JetpackPanel.jsx    # Protected user dashboard
+                │   ├── NotFound.jsx        # 404 page
+                │   ├── Auth.css            # Auth pages stylesheet
+                │   └── JetpackPanel.css    # Dashboard stylesheet
                 └── components/
-                    ├── Protected.jsx       # Route guard (redirects if not logged in)
-                    ├── Logo.jsx            # Jetpack SVG logo
+                    ├── Protected.jsx           # Route guard (redirects unauthenticated users)
+                    ├── Logo.jsx                # Jetpack SVG logo component
                     └── GoogleSignInButton.jsx  # Google OAuth link button
 ```
 
 ---
 
-## ✅ Features (Kya-kya hai Jetpack mein?)
+## ✅ Features
 
-### 🔐 Authentication
+### 🔐 Authentication Flows
+
 | Feature | Description |
 |---|---|
-| **Register** | Email + Password registration with OTP email verification |
-| **Login** | Email + Password login with JWT cookie-based auth |
+| **Register** | Email + password registration with OTP email verification |
+| **Login** | Email + password login with JWT cookie-based sessions |
 | **Google OAuth** | One-click Google sign-in via Passport.js |
-| **OTP Verification** | 6-digit OTP sent via Brevo email service, 10 min expiry |
-| **Forgot Password** | Email OTP-based password reset (2-step flow) |
-| **Logout** | Access + Refresh tokens blacklisted in Redis |
-| **Delete Account** | User deleted from DB + tokens invalidated |
+| **OTP Verification** | 6-digit OTP delivered via Brevo email, expires in 10 minutes |
+| **Forgot Password** | Two-step password reset using an email OTP |
+| **Logout** | Invalidates both access and refresh tokens via Redis blacklisting |
+| **Delete Account** | Removes user from the database and invalidates all active tokens |
 
 ### 🛡️ Security
+
 | Feature | Details |
 |---|---|
-| **JWT Access Token** | Short-lived (15 min), stored in `httpOnly` cookie |
-| **JWT Refresh Token** | Long-lived (7 days), rotated on every use |
-| **Redis Blacklist** | Revoked tokens stored in Redis to prevent replay attacks |
-| **Helmet.js** | Sets secure HTTP headers |
-| **Rate Limiting** | 100 requests per 15 minutes per IP on `/api/auth` |
-| **bcryptjs** | Passwords hashed with salt rounds = 10 |
-| **express-validator** | Input validation on register/login |
+| **JWT Access Token** | Short-lived (15 min), stored in an `httpOnly` cookie |
+| **JWT Refresh Token** | Long-lived (7 days), rotated on every use to prevent replay attacks |
+| **Redis Blacklist** | Revoked tokens stored in Redis — prevents reuse after logout |
+| **Helmet.js** | Sets secure HTTP response headers automatically |
+| **Rate Limiting** | 100 requests per 15 minutes per IP on all `/api/auth` routes |
+| **bcryptjs** | All passwords hashed with a salt factor of 10 |
+| **Input Validation** | Server-side validation on all inputs via `express-validator` |
 
 ### 🌐 Frontend
+
 | Feature | Description |
 |---|---|
-| **Redux Toolkit** | Global auth state (user, loading, error) |
-| **Protected Routes** | Auto-redirect to `/login` if not authenticated |
-| **Auto Token Refresh** | Axios interceptor silently refreshes expired access tokens |
-| **Toast Notifications** | `react-hot-toast` for all success/error feedback |
-| **Responsive Design** | iOS-inspired clean UI with glassmorphism |
+| **Redux Toolkit** | Global auth state management (user, loading, error) |
+| **Protected Routes** | Automatically redirects unauthenticated users to `/login` |
+| **Silent Token Refresh** | Axios interceptor transparently refreshes expired access tokens |
+| **Toast Notifications** | User-facing success and error feedback via `react-hot-toast` |
+| **Responsive UI** | Clean, iOS-inspired design with subtle glassmorphism |
 
 ---
 
-## 🚀 Local Setup (Kaise chalao?)
+## 🚀 Getting Started
 
 ### Prerequisites
+
 - Node.js v18+
-- MongoDB Atlas account (ya local MongoDB)
-- Redis Cloud account (ya local Redis)
-- Brevo account (free email service)
-- Google Cloud OAuth credentials
+- A MongoDB Atlas cluster (or local MongoDB instance)
+- A Redis Cloud instance (or local Redis server)
+- A [Brevo](https://brevo.com) account for transactional email (free tier available)
+- Google Cloud OAuth 2.0 credentials
 
 ---
 
-### Step 1: Clone the repo
+### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/Notanormaldev/Jetpack.git
@@ -134,39 +138,39 @@ cd Jetpack
 
 ---
 
-### Step 2: Backend Setup
+### 2. Backend Setup
 
 ```bash
 cd Backend
 npm install
 ```
 
-**`.env` file banao** `Backend/` folder mein:
+Create a `.env` file in the `Backend/` directory:
 
 ```env
 MONGO_URI=mongodb+srv://<user>:<password>@cluster.mongodb.net/<dbname>
-JWT=your_super_secret_jwt_key_here
+JWT=your_super_secret_jwt_key
 GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
 BREVO_API_KEY=your_brevo_api_key
-GOOGLE_EMAIL=your_email@gmail.com
+GOOGLE_EMAIL=your_sender_email@example.com
 REDIS_HOST=your_redis_host
 REDIS_PORT=your_redis_port
 REDIS_PASSWORD=your_redis_password
 NODE_ENVIRONMENT=development
 ```
 
-**Backend start karo:**
+Start the backend server:
 
 ```bash
 npm run dev
 ```
 
-Backend `http://localhost:3000` pe chalega.
+The API server will run on `http://localhost:3000`.
 
 ---
 
-### Step 3: Frontend Setup
+### 3. Frontend Setup
 
 ```bash
 cd ../Frontend
@@ -174,131 +178,126 @@ npm install
 npm run dev
 ```
 
-Frontend `http://localhost:5173` pe chalega.
+The frontend will run on `http://localhost:5173`.
 
-> **Note:** Vite automatically `/api` requests ko `http://localhost:3000` pe proxy karta hai — koi alag configuration ki zaroorat nahi.
+> **Note:** Vite's dev proxy automatically forwards all `/api` requests to `http://localhost:3000`. No additional configuration needed.
 
 ---
 
 ## 🌍 API Reference
 
-Base URL: `http://localhost:3000/api/auth`
+**Base URL:** `http://localhost:3000/api/auth`
 
-| Method | Endpoint | Description | Auth Required |
+| Method | Endpoint | Description | Requires Auth |
 |---|---|---|---|
-| `POST` | `/register` | User register + OTP send | ❌ |
-| `POST` | `/verify-otp` | OTP verify + JWT set | ❌ |
-| `POST` | `/login` | Login + JWT set | ❌ |
-| `GET` | `/get-me` | Get current user info | ✅ |
-| `POST` | `/refresh-token` | Refresh access token | ❌ (needs refresh cookie) |
-| `POST` | `/forgot-password` | Send reset OTP to email | ❌ |
-| `POST` | `/reset-password` | Reset password with OTP | ❌ |
-| `POST` | `/logout` | Logout + blacklist tokens | ❌ |
-| `DELETE` | `/delete-account` | Delete user account | ✅ |
-| `GET` | `/google` | Initiate Google OAuth | ❌ |
-| `GET` | `/google/callback` | Google OAuth callback | ❌ |
+| `POST` | `/register` | Register a new user and send an OTP | ❌ |
+| `POST` | `/verify-otp` | Verify OTP and issue JWT cookies | ❌ |
+| `POST` | `/login` | Log in and issue JWT cookies | ❌ |
+| `GET` | `/get-me` | Retrieve the currently authenticated user | ✅ |
+| `POST` | `/refresh-token` | Rotate and reissue access and refresh tokens | ❌ (needs refresh cookie) |
+| `POST` | `/forgot-password` | Send a password reset OTP to the user's email | ❌ |
+| `POST` | `/reset-password` | Reset password using a valid OTP | ❌ |
+| `POST` | `/logout` | Log out and blacklist both tokens | ❌ |
+| `DELETE` | `/delete-account` | Permanently delete the account and revoke tokens | ✅ |
+| `GET` | `/google` | Initiate the Google OAuth flow | ❌ |
+| `GET` | `/google/callback` | Handle the Google OAuth callback | ❌ |
 
 ---
 
-## 🔄 Auth Flow Diagram
+## 🔄 Authentication Flow
 
 ```
-Register ──► OTP Email Sent ──► Verify OTP ──► JWT Cookies Set ──► Dashboard
-                                                      │
-Login ─────────────────────────────────────────────► │
-                                                      │
-Google OAuth ──► Passport Callback ──────────────────┘
-                                                      │
-                                          Access Token Expires (15m)
-                                                      │
-                                    Axios Interceptor ──► POST /refresh-token
-                                                      │
-                                          New Tokens Set in Cookies
+Register ──► OTP Sent to Email ──► Verify OTP ──► JWT Cookies Set ──► Dashboard
+                                                          │
+Login ────────────────────────────────────────────────── │
+                                                          │
+Google OAuth ──► Passport Callback ───────────────────── │
+                                                          ▼
+                                              Access Token Expires (15 min)
+                                                          │
+                                       Axios Interceptor detects 401 + expired
+                                                          │
+                                           POST /refresh-token
+                                                          │
+                                         New tokens issued via cookies
+                                                          │
+                                        Original request retried silently
 ```
 
 ---
 
-## 🧠 Technical Deep Dive
+## 🧠 Technical Details
 
 ### JWT Strategy
-- **Access Token** (15 min): Contains `{ id, user: { _id, email, role, fullname } }` — short-lived, refreshed silently.
-- **Refresh Token** (7 days): Contains only `{ id }` — rotates on every use (prevents refresh token reuse attacks).
-- Both tokens stored in `httpOnly; SameSite=Lax` cookies — XSS-safe.
+
+- **Access Token** (15 min): Signed with payload `{ id, user: { _id, email, role, fullname } }`. Short-lived to minimize exposure risk.
+- **Refresh Token** (7 days): Contains only `{ id }`. Rotated on every use — old refresh tokens are immediately blacklisted after rotation, preventing replay attacks.
+- Both tokens are stored in `httpOnly; SameSite=Lax` cookies, making them inaccessible to JavaScript (XSS-safe).
 
 ### Redis Token Blacklisting
-- Jab user logout/delete karta hai, dono tokens Redis mein store hote hain apni original TTL ke saath.
-- Har protected request pe token Redis mein check hota hai before JWT verify.
-- **Prevents:** Logout bypass, session hijacking via stolen tokens.
+
+- On logout or account deletion, both the access and refresh tokens are stored in Redis with their remaining TTL.
+- Every request to a protected endpoint checks Redis for the token before verifying the JWT signature.
+- This effectively makes token revocation instant, regardless of the token's remaining lifetime.
 
 ### Silent Token Refresh
-- `auth.api.js` mein Axios response interceptor hai.
-- Jab 401 + `expired: true` response aata hai, interceptor silently `POST /refresh-token` call karta hai.
-- Success pe original request retry hoti hai.
-- Failure pe user `/login` pe redirect ho jaata hai.
+
+- The Axios instance in `auth.api.js` includes a response interceptor.
+- When a `401` response is received with `expired: true`, the interceptor automatically calls `POST /refresh-token`.
+- On success, the original failed request is retried transparently.
+- If the refresh token has also expired, the user is redirected to `/login`.
 
 ---
 
-## ⚙️ Environment Variables Reference
+## ⚙️ Environment Variables
 
 | Variable | Required | Description |
 |---|---|---|
 | `MONGO_URI` | ✅ | MongoDB connection string |
-| `JWT` | ✅ | JWT signing secret |
-| `GOOGLE_CLIENT_ID` | ✅ | Google OAuth Client ID |
-| `GOOGLE_CLIENT_SECRET` | ✅ | Google OAuth Client Secret |
-| `BREVO_API_KEY` | ✅ | Brevo transactional email API key |
-| `GOOGLE_EMAIL` | ✅ | Sender email address for OTPs |
+| `JWT` | ✅ | Secret key for signing JWT tokens |
+| `GOOGLE_CLIENT_ID` | ✅ | Google OAuth 2.0 Client ID |
+| `GOOGLE_CLIENT_SECRET` | ✅ | Google OAuth 2.0 Client Secret |
+| `BREVO_API_KEY` | ✅ | Brevo (Sendinblue) API key for email delivery |
+| `GOOGLE_EMAIL` | ✅ | Sender email address used for OTP emails |
 | `REDIS_HOST` | ✅ | Redis server hostname |
 | `REDIS_PORT` | ✅ | Redis server port |
-| `REDIS_PASSWORD` | ✅ | Redis auth password |
-| `NODE_ENVIRONMENT` | ✅ | `development` or `production` |
+| `REDIS_PASSWORD` | ✅ | Redis server authentication password |
+| `NODE_ENVIRONMENT` | ✅ | Set to `development` or `production` |
 
-> ⚠️ **Warning:** Apna `.env` file kabhi bhi Git pe push mat karo. `.gitignore` mein already add hai, but double-check karo.
-
----
-
-## 🐛 Known Issues & Fixes
-
-| Bug | Fix Applied |
-|---|---|
-| CORS `Methods` typo (capital M) | Fixed to lowercase `methods` — DELETE requests were being blocked |
-| `tokenresponse` returning HTTP 201 | Fixed to HTTP 200 — 201 is "Created", not appropriate for login |
-| OTP emails branded as "Luomi" | Fixed to "Jetpack" branding throughout |
+> ⚠️ **Never commit your `.env` file to version control.** It is already listed in `.gitignore`, but always double-check before pushing.
 
 ---
 
 ## 🛠️ Tech Stack
 
 ### Backend
-- **Express.js v5** — Web framework
-- **Mongoose** — MongoDB ODM
-- **jsonwebtoken** — JWT sign/verify
+- **Express.js v5** — Web application framework
+- **Mongoose** — MongoDB object modeling
+- **jsonwebtoken** — JWT signing and verification
 - **bcryptjs** — Password hashing
-- **ioredis** — Redis client
-- **passport + passport-google-oauth20** — Google OAuth
-- **express-rate-limit** — Rate limiting
+- **ioredis** — Redis client for token blacklisting
+- **Passport.js + passport-google-oauth20** — Google OAuth strategy
+- **express-rate-limit** — API rate limiting
 - **helmet** — Secure HTTP headers
 - **morgan** — HTTP request logging
-- **sib-api-v3-sdk (Brevo)** — Transactional emails
-- **express-validator** — Input validation
+- **sib-api-v3-sdk (Brevo)** — Transactional email delivery
+- **express-validator** — Request input validation
 
 ### Frontend
 - **React 19** — UI library
-- **Vite 8** — Build tool + dev server
-- **Redux Toolkit** — State management
+- **Vite 8** — Build tool and development server
+- **Redux Toolkit** — Predictable global state management
 - **React Router v7** — Client-side routing
-- **Axios** — HTTP client with interceptors
-- **react-hot-toast** — Toast notifications
-- **react-icons** — Icon library
-- **Tailwind CSS v4** — Utility CSS (via Vite plugin)
+- **Axios** — HTTP client with request/response interceptors
+- **react-hot-toast** — Non-intrusive toast notifications
+- **react-icons** — Icon component library
+- **Tailwind CSS v4** — Utility-first CSS (loaded via Vite plugin)
 
 ---
 
-## 👤 Developer
+## 👤 Author
 
 **Harsh Patel** — [@Notanormaldev](https://github.com/Notanormaldev)
-
-Built with ❤️ for hackathons and rapid prototyping.
 
 ---
 
