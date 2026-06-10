@@ -13,7 +13,7 @@ const client = new SibApiV3Sdk.TransactionalEmailsApi();
 client.sendTransacEmail({ 
   sender: { 
   email: config.GOOGLE_EMAIL,
-  name: "Luomi"  
+  name: "Jetpack"  
 }, 
   to: [{ email: config.GOOGLE_EMAIL }], 
   subject: "test", 

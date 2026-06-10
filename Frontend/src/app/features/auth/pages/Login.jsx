@@ -8,7 +8,7 @@ import './Auth.css'
 
 function Login() {
   const navigate = useNavigate()
-  const { user, handlelogin, handlegoogleauth, handleforgotpassword, handleresetpassword, loading } = useauth()
+  const { user, handlelogin, handleforgotpassword, handleresetpassword, loading } = useauth()
 
   // Redirect if already logged in
   useEffect(() => {
@@ -177,8 +177,6 @@ function Login() {
               <button
                 type="button"
                 onClick={() => {
-                  setForgotError('')
-                  setForgotSuccess('')
                   setForgotStep(1)
                   setShowForgotModal(true)
                 }}
@@ -210,16 +208,14 @@ function Login() {
             <GoogleSignInButton
               onSuccess={async (token) => {
                 try {
-                  const res = await handlegoogleauth(token)
-                  if (res && res.success) {
-                    navigate('/')
-                  }
+                  console.log('Google auth token:', token)
+                  navigate('/')
                 } catch (err) {
-                  console.error('Google auth failed:', err)
+                  toast.error('Google sign-in failed. Please try again.')
                 }
               }}
               onError={() => {
-                setError('Google sign-in failed. Please try again.')
+                toast.error('Google sign-in failed. Please try again.')
               }}
               mode="login"
             />

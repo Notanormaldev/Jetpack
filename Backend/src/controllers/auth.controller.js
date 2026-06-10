@@ -34,7 +34,7 @@ async function tokenresponse(user, res, msg) {
   res.cookie('refreshToken', refreshToken, { ...cookieOptions, maxAge: 7 * 24 * 60 * 60 * 1000 })
 
   user.password = undefined
-  return res.status(201).json({
+  return res.status(200).json({
     msg,
     success: true,
     user: user

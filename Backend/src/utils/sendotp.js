@@ -8,16 +8,16 @@ export function generateOtp() {
 export async function sendOtpEmail(toEmail, otp) {
   await sendEmail({
     to: toEmail,
-    subject: "Your Login OTP - Luomi",
+    subject: "Your Verification OTP - Jetpack",
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 400px; margin: auto;">
-        <h2>Login Verification</h2>
+        <h2>Jetpack — Email Verification</h2>
         <p>Your OTP code is:</p>
-        <h1 style="letter-spacing: 8px; color: #4F46E5;">${otp}</h1>
+        <h1 style="letter-spacing: 8px; color: #0071E3;">${otp}</h1>
         <p>This code expires in <strong>10 minutes</strong>.</p>
         <p style="color: gray; font-size: 12px;">If you didn't request this, ignore this email.</p>
       </div>
     `,
-    text: `Your Luomi login OTP is: ${otp}. Valid for 10 minutes.`,
+    text: `Your Jetpack verification OTP is: ${otp}. Valid for 10 minutes.`,
   });
 }

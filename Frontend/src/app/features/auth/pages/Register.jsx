@@ -8,7 +8,7 @@ import './Auth.css'
 
 function Register() {
   const navigate = useNavigate()
-  const { user, handleregister, handlegoogleauth, handleverifyotp, loading } = useauth()
+  const { user, handleregister, handleverifyotp, loading } = useauth()
 
   // Redirect if already logged in
   useEffect(() => {
@@ -251,16 +251,14 @@ function Register() {
                 <GoogleSignInButton
                   onSuccess={async (token) => {
                     try {
-                      const res = await handlegoogleauth(token)
-                      if (res && res.success) {
-                        navigate('/')
-                      }
+                      console.log('Google auth token:', token)
+                      navigate('/')
                     } catch (err) {
-                      console.error('Google auth failed:', err)
+                      toast.error('Google sign-up failed. Please try again.')
                     }
                   }}
                   onError={() => {
-                    setError('Google sign-up failed. Please try again.')
+                    toast.error('Google sign-up failed. Please try again.')
                   }}
                   mode="signup"
                 />
